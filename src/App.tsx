@@ -9,15 +9,15 @@ function App() {
 
   // TODO:
   const currentYear = (new Date()).getFullYear();
-  const getDaysForYear = (year: number): dayjs.Dayjs[] => {
-    let day = dayjs(`${year}`, "YYYY");
-    let days: dayjs.Dayjs[] = [];
-    while (day.year() === year) {
-      days.push(day);
-      day.add(1, 'day');
-    }
-    return days;
-  };
+  // const getDaysForYear = (year: number): dayjs.Dayjs[] => {
+  //   let day = dayjs(`${year}`, "YYYY");
+  //   let days: dayjs.Dayjs[] = [];
+  //   while (day.year() === year) {
+  //     days.push(day);
+  //     day.add(1, 'day');
+  //   }
+  //   return days;
+  // };
 
   const getDaysForYearByMonth = (year: number): Array<{ month: number; monthD: dayjs.Dayjs, days: dayjs.Dayjs[] }> => {
     let day = dayjs(`${year}`, "YYYY");
@@ -64,7 +64,7 @@ function App() {
             <div className="flex flex-wrap max-w-xs">
               {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
               {m.days.map((d) => {
-                return <div className='flex-1 basis-1/7 p-2'>{d.date()}</div>;
+                return <div className='flex-1 basis-1/7 p-2 hover:bg-sky-200 text-right'>{d.date()}</div>;
               })}
               {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
             </div>
