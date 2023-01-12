@@ -28,7 +28,13 @@ function get_time_off(data: IDaysArray, day: dayjs.Dayjs): number {
 }
 
 function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysArray {
-  return [... data, { day_iso: day.toISOString(), hours: hours }];
+  const dayIso = day.toISOString();
+  const index = data.findIndex((v) => v.day_iso === dayIso);
+  if (index !== -1) {
+    const clone = [...data];
+    clone[index].hours = hours;
+  }
+  return [... data, { day_iso: dayIso, hours: hours }];
 }
 
 function App() {
@@ -80,6 +86,11 @@ function App() {
         <input type="year" value={currentYear} readOnly={true} />
       </label>
 
+      <ul>
+        <li>Hours off: {data.reduce((acc, v) => { return acc + v.hours }, 0)}</li>
+        <li>Days off: {}</li>
+      </ul>
+
       {
         getDaysForYearByMonth(currentYear).map((m) => {
           const daysFromStartOfWeek = m.days[0].weekday();
@@ -92,12 +103,21 @@ function App() {
               {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
               {m.days.map((d) => {
                 const hasOff = get_time_off(data, d) !== 0;
+                const isWeekendV = isWeekend(d);
                 return <div className={classes([
                     'flex-1 basis-1/7 p-2 text-right',
                     (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
-                    (isWeekend(d)) ? "text-slate-300" : "null",
+                    (isWeekendV) ? "text-slate-300" : null,
                   ])}
-                  onClick={() => {setData(set_time_off(data, d, 8))}}>{d.date()}</div>;
+                  onClick={() => {
+                    if (!isWeekendV) {
+                      if (hasOff) {
+                        setData(set_time_off(data, d, 0));
+                      } else {
+                        setData(set_time_off(data, d, 8));
+                      }
+                    }
+                  }}>{d.date()}</div>;
               })}
               {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
             </div>
