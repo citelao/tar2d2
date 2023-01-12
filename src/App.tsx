@@ -70,6 +70,9 @@ function App() {
   }
 
   // TODO: holidays
+  
+  const usedHours = data.reduce((acc, v) => { return acc + v.hours }, 0);
+  const usedDays = (usedHours / 8);
 
   return (
     <>
@@ -87,8 +90,8 @@ function App() {
       </label>
 
       <ul>
-        <li>Hours off: {data.reduce((acc, v) => { return acc + v.hours }, 0)}</li>
-        <li>Days off: {}</li>
+        <li>Hours off: {usedHours}</li>
+        <li>Days off: {usedDays.toFixed(2)}</li>
       </ul>
 
       {
