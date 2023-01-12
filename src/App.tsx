@@ -9,10 +9,40 @@ function App() {
 
   // TODO:
   const currentYear = (new Date()).getFullYear();
+  const getDaysForYear = (year: number): dayjs.Dayjs[] => {
+    let day = dayjs(`${year}`, "YYYY");
+    let days: dayjs.Dayjs[] = [];
+    while (day.year() === year) {
+      days.push(day);
+      day.add(1, 'day');
+    }
+    return days;
+  };
+
+  const getDaysForYearByMonth = (year: number): Array<{ month: number; monthD: dayjs.Dayjs, days: dayjs.Dayjs[] }> => {
+    let day = dayjs(`${year}`, "YYYY");
+    let yearArray = [];
+    while (day.year() === year) {
+      let currentMonth = day.month();
+      let monthD = day;
+      let days = [];
+      while(day.month() === currentMonth)
+      {
+        days.push(day);
+        day = day.add(1, 'day');
+      }
+      yearArray.push({
+        month: currentMonth,
+        monthD: monthD,
+        days: days,
+      });
+    }
+    return yearArray;
+  };
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Porta-TAR calculator</h1>
+      <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
       <p>Yo, I heard you like tracking your vacation</p>
 
       <label>
@@ -25,17 +55,18 @@ function App() {
         <input type="year" value={currentYear} readOnly={true} />
       </label>
 
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((m) => {
-        const month =dayjs().month(m); 
-        const days = month.daysInMonth();
-        const mapper = times(days, (i) => <div>{i}</div>);
-        return <div>
-          <b>{month.format("MMMM")}</b>
-          <div className="flex gap-2">
-            {mapper}
-          </div>
-        </div>;
-      })}
+      {
+        getDaysForYearByMonth(currentYear).map((m) => {
+          return <div>
+            <b>{m.monthD.format("MMMM")}</b>
+            <div className="flex gap-2">
+              {m.days.map((d) => {
+                return <div>{d.date()}</div>;
+              })}
+            </div>
+          </div>;
+        })
+      }
 
       <hr />
 
