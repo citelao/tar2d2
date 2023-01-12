@@ -1,19 +1,43 @@
 import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 import './App.css'
+import * as dayjs from 'dayjs'
+import { times } from './utils';
 
 function App() {
   const [count, setCount] = useState(0)
 
+  // TODO:
+  const currentYear = (new Date()).getFullYear();
+
   return (
     <>
-      <h1>Porta-TAR calculator</h1>
+      <h1 className="text-3xl font-bold underline">Porta-TAR calculator</h1>
       <p>Yo, I heard you like tracking your vacation</p>
 
       <label>
         Start date:
         <input type="month" />
       </label>
+
+      <label>
+        Year:
+        <input type="year" value={currentYear} readOnly={true} />
+      </label>
+
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((m) => {
+        const month =dayjs().month(m); 
+        const days = month.daysInMonth();
+        const mapper = times(days, (i) => <div>{i}</div>);
+        return <div>
+          <b>{month.format("MMMM")}</b>
+          <div className="flex gap-2">
+            {mapper}
+          </div>
+        </div>;
+      })}
+
+      <hr />
 
       <h2>Accrual rates</h2>
       <p>(via <a href="https://microsoft.sharepoint.com/sites/HRweb/SitePages/FAQ_DTO.aspx">Discretionary Time Off (DTO) FAQ</a>)</p>
