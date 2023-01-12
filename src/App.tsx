@@ -57,12 +57,16 @@ function App() {
 
       {
         getDaysForYearByMonth(currentYear).map((m) => {
+          const daysFromStartOfWeek = m.days[0].day();
+          const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].day();
           return <div>
             <b>{m.monthD.format("MMMM")}</b>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap max-w-xs">
+              {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
               {m.days.map((d) => {
-                return <div>{d.date()}</div>;
+                return <div className='flex-1 basis-1/7 p-2'>{d.date()}</div>;
               })}
+              {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
             </div>
           </div>;
         })
