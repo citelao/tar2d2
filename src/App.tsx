@@ -2,7 +2,10 @@ import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 import './App.css'
 import * as dayjs from 'dayjs'
+import * as weekday from 'dayjs/plugin/weekday';
 import { classes, times } from './utils';
+
+dayjs.extend(weekday);
 
 type IDaysArray = Array<{
   day_iso: string;
@@ -55,6 +58,13 @@ function App() {
     return yearArray;
   };
 
+  const isWeekend = (day: dayjs.Dayjs): boolean => {
+    console.log(day.day())
+    return day.day() === 0 || day.day() === 6;
+  }
+
+  // TODO: holidays
+
   return (
     <>
       <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
@@ -72,17 +82,20 @@ function App() {
 
       {
         getDaysForYearByMonth(currentYear).map((m) => {
-          const daysFromStartOfWeek = m.days[0].day();
-          const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].day();
+          const daysFromStartOfWeek = m.days[0].weekday();
+          const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].weekday();
           return <div>
             <b>{m.monthD.format("MMMM")}</b>
+            {/* TODO: actual table for accessibility */}
             <div className="flex flex-wrap max-w-xs">
+              {times(7, (i) => <div className='flex-1 basis-1/7 p-2 text-right text-slate-300'>{dayjs().weekday(i).format("dd")}</div>)}
               {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
               {m.days.map((d) => {
                 const hasOff = get_time_off(data, d) !== 0;
                 return <div className={classes([
                     'flex-1 basis-1/7 p-2 text-right',
                     (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
+                    (isWeekend(d)) ? "text-slate-300" : "null",
                   ])}
                   onClick={() => {setData(set_time_off(data, d, 8))}}>{d.date()}</div>;
               })}
