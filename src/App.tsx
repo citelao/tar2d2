@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+// import reactLogo from './assets/react.svg'
 import './App.css'
 
 function App() {
@@ -14,9 +14,51 @@ function App() {
         Start date:
         <input type="month" />
       </label>
+
+      <h2>Accrual rates</h2>
+      <p>(via <a href="https://microsoft.sharepoint.com/sites/HRweb/SitePages/FAQ_DTO.aspx">Discretionary Time Off (DTO) FAQ</a>)</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Years of service</th>
+            <th>Vacation grant rate (per pay period &times; 24)</th>
+            <th>Maximum annual vacation granted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0-6 yrs</td>
+            <td>5.0 hrs</td>
+            <td>15 days (120 hrs)</td>
+          </tr>
+          <tr>
+            <td>7-12 yrs</td>
+            <td>6.67 hrs</td>
+            <td>20 days (160 hrs)</td>
+          </tr>
+          <tr>
+            <td>13+ yrs</td>
+            <td>8.34 hrs</td>
+            <td>25 days (200 hrs)</td>
+          </tr>
+        </tbody>
+      </table>
     </>
   );
 
+  // Years of service | Vacation grant rate* (per pay period x 24) | Maximum  annual
+  // vacation granted |
+  // 0-6 years5.0 hours15 days (120 hours)7-12 years6.67 hours20
+  // days (160 hours)13 or more years8.34 hours25 days (200 hours)
+  //
+  // Example: You are a full-time salaried employee, reaching your six-year
+  // anniversary November 1, 2022. The next calendar day after the six-year
+  // anniversary, November 2, 2022 (first day in your seventh year of
+  // employment), you will move to the accrual rate of 6.67 hours per pay
+  // period. This new accrual rate will be in effect for the last four pay
+  // periods of 2022 (11/15, 11/30, 12/15, and 12/31). You would then be able to
+  // carry over up to 160 hours of vacation into 2023.
+  
   // return (
   //   <div className="App">
   //     <div>
