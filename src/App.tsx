@@ -137,22 +137,22 @@ function App() {
         <tbody>
           <tr>
             <td className='text-right'>Used</td>
-            <td>{usedHours}</td>
-            <td>{usedDays.toFixed(2)}</td>
+            <td>{usedHours} hrs</td>
+            <td>{usedDays.toFixed(2)} days</td>
           </tr>
           <tr>
             <td className='text-right'>Remaining</td>
             <td className={classes([
               (remainingHours < 0) ? "bg-red-200" : null,
-            ])}>{remainingHours}</td>
+            ])}>{remainingHours} hrs</td>
             <td className={classes([
               (remainingHours < 0) ? "bg-red-200" : null,
-            ])}>{remainingDays.toFixed(2)}</td>
+            ])}>{remainingDays.toFixed(2)} days</td>
           </tr>
           <tr>
             <td className='text-right'>Total</td>
-            <td>{totalHours}</td>
-            <td>{totalDays.toFixed(2)}</td>
+            <td>{totalHours} hrs</td>
+            <td>{totalDays.toFixed(2)} days</td>
           </tr>
         </tbody>
       </table>
