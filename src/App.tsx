@@ -2,22 +2,38 @@ import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 import './App.css'
 import * as dayjs from 'dayjs'
-import { times } from './utils';
+import { classes, times } from './utils';
+
+type IDaysArray = Array<{
+  day_iso: string;
+  hours: number;
+}>;
+
+// interface IData {
+//   days: IDaysArray;
+// }
+
+function get_time_off(data: IDaysArray, day: dayjs.Dayjs): number {
+  const str = day.toISOString();
+  const result = data.find((v) => v.day_iso === str);
+  if (result)
+  {
+    return result.hours;
+  }
+
+  return 0;
+}
+
+function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysArray {
+  return [... data, { day_iso: day.toISOString(), hours: hours }];
+}
 
 function App() {
   const [count, setCount] = useState(0)
+  const [data, setData] = useState<IDaysArray>([]);
 
   // TODO:
   const currentYear = (new Date()).getFullYear();
-  // const getDaysForYear = (year: number): dayjs.Dayjs[] => {
-  //   let day = dayjs(`${year}`, "YYYY");
-  //   let days: dayjs.Dayjs[] = [];
-  //   while (day.year() === year) {
-  //     days.push(day);
-  //     day.add(1, 'day');
-  //   }
-  //   return days;
-  // };
 
   const getDaysForYearByMonth = (year: number): Array<{ month: number; monthD: dayjs.Dayjs, days: dayjs.Dayjs[] }> => {
     let day = dayjs(`${year}`, "YYYY");
@@ -26,8 +42,7 @@ function App() {
       let currentMonth = day.month();
       let monthD = day;
       let days = [];
-      while(day.month() === currentMonth)
-      {
+      while (day.month() === currentMonth) {
         days.push(day);
         day = day.add(1, 'day');
       }
@@ -64,7 +79,12 @@ function App() {
             <div className="flex flex-wrap max-w-xs">
               {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
               {m.days.map((d) => {
-                return <div className='flex-1 basis-1/7 p-2 hover:bg-sky-200 text-right'>{d.date()}</div>;
+                const hasOff = get_time_off(data, d) !== 0;
+                return <div className={classes([
+                    'flex-1 basis-1/7 p-2 text-right',
+                    (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
+                  ])}
+                  onClick={() => {setData(set_time_off(data, d, 8))}}>{d.date()}</div>;
               })}
               {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
             </div>
@@ -117,7 +137,7 @@ function App() {
   // period. This new accrual rate will be in effect for the last four pay
   // periods of 2022 (11/15, 11/30, 12/15, and 12/31). You would then be able to
   // carry over up to 160 hours of vacation into 2023.
-  
+
   // return (
   //   <div className="App">
   //     <div>

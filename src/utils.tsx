@@ -6,3 +6,7 @@ export function times<T>(n: number, fn: (i: number) => T): T[] {
     }
     return results;
 }
+
+export function classes(arr: Array<string | undefined | null>): string {
+    return arr.filter((v) => !!v).join(" ");
+}
