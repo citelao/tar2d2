@@ -40,6 +40,7 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
 function App() {
   const [count, setCount] = useState(0)
   const [data, setData] = useState<IDaysArray>([]);
+  const [startDate, setStartDate] = useState("2017-08");
 
   // TODO:
   const currentYear = (new Date()).getFullYear();
@@ -81,6 +82,7 @@ function App() {
     dayjs("2023-12-26", "YYYY-MM-DD"),
   ];
 
+  // https://holidays.microsoft.com/
   const isHoliday = (day: dayjs.Dayjs): boolean => {
     // TODO.
     const isKnownHoliday = !!known_holidays.find((d) => d.isSame(day, "day"));
@@ -95,9 +97,16 @@ function App() {
   const usedDays = (usedHours / 8);
 
   const getTotalHours = (startDate: dayjs.Dayjs) => {
-    return 5;
+    const years = dayjs().diff(startDate, "year");
+    if (years < 7) {
+      return 120;
+    } else if (years < 13) {
+      return 160;
+    } else {
+      return 200;
+    }
   };
-  const totalHours = getTotalHours(dayjs("2017-08", "YYYY-MM"));
+  const totalHours = getTotalHours(dayjs(startDate, "YYYY-MM"));
   const totalDays = (totalHours / 8);
   const remainingHours = totalHours - usedHours;
   const remainingDays = (remainingHours / 8);
@@ -109,7 +118,7 @@ function App() {
 
       <label>
         Start date:
-        <input type="month" />
+        <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
       </label>
 
       <label>
