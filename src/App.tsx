@@ -33,6 +33,7 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
   if (index !== -1) {
     const clone = [...data];
     clone[index].hours = hours;
+    return clone;
   }
   return [... data, { day_iso: dayIso, hours: hours }];
 }
@@ -149,9 +150,11 @@ function App() {
                     <td className='text-right'>Remaining</td>
                     <td className={classes([
                       (remainingHours < 0) ? "bg-red-200" : null,
+                      (remainingHours > 0) ? "bg-emerald-300" : null,
                     ])}>{remainingHours} hrs</td>
                     <td className={classes([
                       (remainingHours < 0) ? "bg-red-200" : null,
+                      (remainingHours > 0) ? "bg-emerald-300" : null,
                     ])}>{remainingDays.toFixed(2)} days</td>
                   </tr>
                   <tr>
