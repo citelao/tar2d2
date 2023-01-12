@@ -19,6 +19,12 @@
   -webkit-text-size-adjust: 100%;
 }
 
+@layer components {
+  td {
+    @apply p-1;
+  }
+}
+
 a {
   font-weight: 500;
   color: #646cff;

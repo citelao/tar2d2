@@ -94,6 +94,14 @@ function App() {
   const usedHours = data.reduce((acc, v) => { return acc + v.hours }, 0);
   const usedDays = (usedHours / 8);
 
+  const getTotalHours = (startDate: dayjs.Dayjs) => {
+    return 5;
+  };
+  const totalHours = getTotalHours(dayjs("2017-08", "YYYY-MM"));
+  const totalDays = (totalHours / 8);
+  const remainingHours = totalHours - usedHours;
+  const remainingDays = (remainingHours / 8);
+
   return (
     <>
       <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
@@ -109,10 +117,36 @@ function App() {
         <input type="year" value={currentYear} readOnly={true} />
       </label>
 
-      <ul>
-        <li>Hours off: {usedHours}</li>
-        <li>Days off: {usedDays.toFixed(2)}</li>
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Hours</th>
+            <th>Days</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className='text-right'>Used</td>
+            <td>{usedHours}</td>
+            <td>{usedDays.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td className='text-right'>Remaining</td>
+            <td className={classes([
+              (remainingHours < 0) ? "bg-red-200" : null,
+            ])}>{remainingHours}</td>
+            <td className={classes([
+              (remainingHours < 0) ? "bg-red-200" : null,
+            ])}>{remainingDays.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td className='text-right'>Total</td>
+            <td>{totalHours}</td>
+            <td>{totalDays.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
 
       <div className=''>
         {
