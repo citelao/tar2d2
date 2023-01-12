@@ -113,84 +113,92 @@ function App() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
-      <p>Yo, I heard you like tracking your vacation</p>
+      <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
+          <div>
+            <div className='md:fixed top-10'>
+              <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
+              <p>Yo, I heard you like tracking your vacation</p>
 
-      <label>
-        Start date:
-        <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-      </label>
+              <label>
+                Year:
+                <input type="year" value={currentYear} readOnly={true} />
+              </label>
 
-      <label>
-        Year:
-        <input type="year" value={currentYear} readOnly={true} />
-      </label>
+              <br />
 
-      <table>
-        <thead>
-          <tr>
-            <th>&nbsp;</th>
-            <th>Hours</th>
-            <th>Days</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className='text-right'>Used</td>
-            <td>{usedHours} hrs</td>
-            <td>{usedDays.toFixed(2)} days</td>
-          </tr>
-          <tr>
-            <td className='text-right'>Remaining</td>
-            <td className={classes([
-              (remainingHours < 0) ? "bg-red-200" : null,
-            ])}>{remainingHours} hrs</td>
-            <td className={classes([
-              (remainingHours < 0) ? "bg-red-200" : null,
-            ])}>{remainingDays.toFixed(2)} days</td>
-          </tr>
-          <tr>
-            <td className='text-right'>Total</td>
-            <td>{totalHours} hrs</td>
-            <td>{totalDays.toFixed(2)} days</td>
-          </tr>
-        </tbody>
-      </table>
+              <label>
+                Start date:
+                <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              </label>
 
-      <div className=''>
-        {
-          getDaysForYearByMonth(currentYear).map((m) => {
-            const daysFromStartOfWeek = m.days[0].weekday();
-            const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].weekday();
-            return <div>
-              <b>{m.monthD.format("MMMM")}</b>
-              {/* TODO: actual table for accessibility */}
-              <div className="flex flex-wrap max-w-xs">
-                {times(7, (i) => <div className='flex-1 basis-1/7 p-2 text-right text-slate-300'>{dayjs().weekday(i).format("dd")}</div>)}
-                {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
-                {m.days.map((d) => {
-                  const hasOff = get_time_off(data, d) !== 0;
-                  const isAutomatic = isAlreadyOff(d);
-                  return <div className={classes([
-                      'flex-1 basis-1/7 p-2 text-right',
-                      (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
-                      (isAutomatic) ? "text-slate-300" : null,
-                    ])}
-                    onClick={() => {
-                      if (!isAutomatic) {
-                        if (hasOff) {
-                          setData(set_time_off(data, d, 0));
-                        } else {
-                          setData(set_time_off(data, d, 8));
+              <table>
+                <thead>
+                  <tr>
+                    <th>&nbsp;</th>
+                    <th>Hours</th>
+                    <th>Days</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className='text-right'>Used</td>
+                    <td>{usedHours} hrs</td>
+                    <td>{usedDays.toFixed(2)} days</td>
+                  </tr>
+                  <tr>
+                    <td className='text-right'>Remaining</td>
+                    <td className={classes([
+                      (remainingHours < 0) ? "bg-red-200" : null,
+                    ])}>{remainingHours} hrs</td>
+                    <td className={classes([
+                      (remainingHours < 0) ? "bg-red-200" : null,
+                    ])}>{remainingDays.toFixed(2)} days</td>
+                  </tr>
+                  <tr>
+                    <td className='text-right'>Total</td>
+                    <td>{totalHours} hrs</td>
+                    <td>{totalDays.toFixed(2)} days</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        <div className=''>
+          {
+            getDaysForYearByMonth(currentYear).map((m) => {
+              const daysFromStartOfWeek = m.days[0].weekday();
+              const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].weekday();
+              return <div>
+                <b>{m.monthD.format("MMMM")}</b>
+                {/* TODO: actual table for accessibility */}
+                <div className="flex flex-wrap max-w-xs">
+                  {times(7, (i) => <div className='flex-1 basis-1/7 p-2 text-right text-slate-300'>{dayjs().weekday(i).format("dd")}</div>)}
+                  {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
+                  {m.days.map((d) => {
+                    const hasOff = get_time_off(data, d) !== 0;
+                    const isAutomatic = isAlreadyOff(d);
+                    return <div className={classes([
+                        'flex-1 basis-1/7 p-2 text-right',
+                        (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
+                        (isAutomatic) ? "text-slate-300" : null,
+                      ])}
+                      onClick={() => {
+                        if (!isAutomatic) {
+                          if (hasOff) {
+                            setData(set_time_off(data, d, 0));
+                          } else {
+                            setData(set_time_off(data, d, 8));
+                          }
                         }
-                      }
-                    }}>{d.date()}</div>;
-                })}
-                {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
-              </div>
-            </div>;
-          })
-        }
+                      }}>{d.date()}</div>;
+                  })}
+                  {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
+                </div>
+              </div>;
+            })
+          }
+        </div>
       </div>
 
       <hr />
