@@ -97,8 +97,9 @@ function App() {
   const usedHours = data.reduce((acc, v) => { return acc + v.hours }, 0);
   const usedDays = (usedHours / 8);
 
+  const getYearsWorked = (startDate: dayjs.Dayjs) => { return dayjs().diff(startDate, "year"); };
   const getTotalHours = (startDate: dayjs.Dayjs) => {
-    const years = dayjs().diff(startDate, "year");
+    const years = getYearsWorked(startDate);
     if (years < 7) {
       return 120;
     } else if (years < 13) {
@@ -116,7 +117,7 @@ function App() {
     <>
       <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
           <div>
-            <div className='md:fixed top-10'>
+            <div className='md:fixed top-10 flex flex-col gap-4'>
               <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
               <p>Yo, I heard you like tracking your vacation</p>
 
@@ -125,42 +126,45 @@ function App() {
                 <input type="year" value={currentYear} readOnly={true} />
               </label>
 
-              <br />
-
-              <label>
-                Start date:
-                <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-              </label>
+              <div>
+                <label>
+                  Start date:
+                  <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                </label>
+                <span className='text-slate-400'>&rarr; {getYearsWorked(startDate)} years</span>
+              </div>
 
               <table>
-                <thead>
+                {/* <thead>
                   <tr>
                     <th>&nbsp;</th>
-                    <th>Hours</th>
                     <th>Days</th>
+                    <th>Hours</th>
                   </tr>
-                </thead>
+                </thead> */}
                 <tbody>
                   <tr>
                     <td className='text-right'>Used</td>
-                    <td>{usedHours} hrs</td>
-                    <td>{usedDays.toFixed(2)} days</td>
+                    <td className='text-right'>{usedDays.toFixed(2)} days</td>
+                    <td className="text-slate-400">{usedHours} hrs</td>
                   </tr>
                   <tr>
                     <td className='text-right'>Remaining</td>
                     <td className={classes([
-                      (remainingHours < 0) ? "bg-red-200" : null,
-                      (remainingHours > 0) ? "bg-emerald-300" : null,
-                    ])}>{remainingHours} hrs</td>
-                    <td className={classes([
+                      "text-right",
                       (remainingHours < 0) ? "bg-red-200" : null,
                       (remainingHours > 0) ? "bg-emerald-300" : null,
                     ])}>{remainingDays.toFixed(2)} days</td>
+                    <td className={classes([
+                      "text-slate-400",
+                      (remainingHours < 0) ? "bg-red-200" : null,
+                      (remainingHours > 0) ? "bg-emerald-300" : null,
+                    ])}>{remainingHours} hrs</td>
                   </tr>
                   <tr>
-                    <td className='text-right'>Total</td>
-                    <td>{totalHours} hrs</td>
-                    <td>{totalDays.toFixed(2)} days</td>
+                    <td className='text-slate-400 text-right'>Total</td>
+                    <td className='text-slate-400 text-right'>{totalDays.toFixed(2)} days</td>
+                    <td className="text-slate-400">{totalHours} hrs</td>
                   </tr>
                 </tbody>
               </table>
