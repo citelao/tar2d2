@@ -196,7 +196,7 @@ function App() {
                   onChange={(e) => {
                     setIncludingFloating(e.target.checked);
                   }} />
-                Include floating holidays <span className='text-slate-400'>(3 days/24 hours)</span>
+                Include floating holidays <span className='text-slate-400'>(2 days/16 hours)</span>
               </label>
 
               <button onClick={() => {
