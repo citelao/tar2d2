@@ -203,6 +203,8 @@ function App() {
                 const hasBackup = backup !== null;
                 if (hasBackup) {
                   setData(backup);
+
+                  // TODO: backup any NEW data since the reset.
                   setBackup(null);
                 } else {
                   setBackup(data);
