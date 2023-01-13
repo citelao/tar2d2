@@ -4,14 +4,10 @@ import './App.css'
 import * as dayjs from 'dayjs'
 import * as weekday from 'dayjs/plugin/weekday';
 import { classes, times } from './utils';
-import { load_includingFloating, load_startDate, persist_includingFloating, persist_startDate } from './State';
+import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
+import IDaysArray from './DaysArray';
 
 dayjs.extend(weekday);
-
-type IDaysArray = Array<{
-  day_iso: string;
-  hours: number;
-}>;
 
 // interface IData {
 //   days: IDaysArray;
@@ -40,7 +36,10 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
 }
 
 function App() {
-  const [data, setData] = useState<IDaysArray>([]);
+  const [data, setData] = useState<IDaysArray>(load_daysArray());
+  useEffect(() => {
+    persist_daysArray(data);
+  }, [data]);
   const [startDate, setStartDate] = useState(load_startDate());
   useEffect(() => {
     persist_startDate(startDate);

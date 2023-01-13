@@ -1,3 +1,19 @@
+import IDaysArray from "./DaysArray";
+
+export function persist_daysArray(value: IDaysArray)
+{
+    localStorage.setItem("days", JSON.stringify(value));
+}
+
+export function load_daysArray(): IDaysArray
+{
+    const read = localStorage.getItem("days");
+    if (!read) {
+        return [];
+    }
+    return JSON.parse(read) as IDaysArray;
+}
+
 export function persist_startDate(value: string) {
     localStorage.setItem("StartDate", value);
 }
