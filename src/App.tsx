@@ -220,7 +220,7 @@ function App() {
                         (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
                         (isAutomatic) ? "text-slate-300" : null,
                         (isToday) ? "border-2 font-bold" : null,
-                        // (isToday && hasOff) ? "bg-emerald-400" : null
+                        (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                       ])}
                       onClick={() => {
                         if (!isAutomatic) {
