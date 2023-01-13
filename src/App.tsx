@@ -42,6 +42,7 @@ function App() {
   const [count, setCount] = useState(0)
   const [data, setData] = useState<IDaysArray>([]);
   const [startDate, setStartDate] = useState("2017-08");
+  const [includeFloating, setIncludingFloating] = useState(true);
 
   // TODO:
   const currentYear = (new Date()).getFullYear();
@@ -108,7 +109,7 @@ function App() {
       return 200;
     }
   };
-  const totalHours = getTotalHours(dayjs(startDate, "YYYY-MM"));
+  const totalHours = getTotalHours(dayjs(startDate, "YYYY-MM")) + (includeFloating ? 3 * 8: 0);
   const totalDays = (totalHours / 8);
   const remainingHours = totalHours - usedHours;
   const remainingDays = (remainingHours / 8);
@@ -168,6 +169,14 @@ function App() {
                   </tr>
                 </tbody>
               </table>
+
+              <label>
+                <input type="checkbox"
+                  checked={includeFloating}
+                  onChange={(e) => {
+                    setIncludingFloating(e.target.checked);
+                  }} />
+                Include floating holidays <span className='text-slate-400'>(3 days/24 hours)</span></label>
             </div>
           </div>
 
