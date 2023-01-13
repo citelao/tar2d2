@@ -37,6 +37,7 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
 
 function App() {
   const [data, setData] = useState<IDaysArray>(load_daysArray());
+  const [viewDate, setViewDate] = useState(dayjs().startOf("year"));
   useEffect(() => {
     persist_daysArray(data);
   }, [data]);
@@ -50,7 +51,7 @@ function App() {
   }, [includeFloating]);
 
   // TODO:
-  const currentYear = (new Date()).getFullYear();
+  const currentYear = viewDate.year();
 
   const getDaysForYearByMonth = (year: number): Array<{ month: number; monthD: dayjs.Dayjs, days: dayjs.Dayjs[] }> => {
     let day = dayjs(`${year}`, "YYYY");
@@ -88,6 +89,11 @@ function App() {
     dayjs("2023-12-25", "YYYY-MM-DD"),
     dayjs("2023-12-26", "YYYY-MM-DD"),
   ];
+
+  const doesYearHaveHolidays = (year: number): boolean => {
+    const found = known_holidays.find((h) => h.year() === year);
+    return !!found;
+  };
 
   // https://holidays.microsoft.com/
   const isHoliday = (day: dayjs.Dayjs): boolean => {
@@ -127,15 +133,23 @@ function App() {
               <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
               <p>Yo, I heard you like tracking your vacation</p>
 
-              <label>
-                Year:
-                <input type="year" value={currentYear} readOnly={true} />
-              </label>
+              <div>
+                <button onClick={() => setViewDate(viewDate.add(-1, "year"))}>&larr;</button>
+                <label>
+                  Year:
+                  <input type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
+                </label>
+                <button onClick={() => setViewDate(viewDate.add(1, "year"))}>&rarr;</button>
+                {(doesYearHaveHolidays(viewDate.year())) 
+                  ? null
+                  : <div className='bg-yellow-300'>I don't know about holidays for {viewDate.year()}!</div>
+                }
+              </div>
 
               <div>
                 <label>
                   Start date:
-                  <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                  <input type="month" value={startDate.format("YYYY-MM")} onChange={(e) => setStartDate(dayjs(e.target.value, "YYYY-MM"))} />
                 </label>
                 <span className='text-slate-400'>&rarr; {getYearsWorked(startDate)} years</span>
               </div>

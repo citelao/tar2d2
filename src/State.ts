@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import IDaysArray from "./DaysArray";
 
 export function persist_daysArray(value: IDaysArray)
@@ -14,12 +15,12 @@ export function load_daysArray(): IDaysArray
     return JSON.parse(read) as IDaysArray;
 }
 
-export function persist_startDate(value: string) {
-    localStorage.setItem("StartDate", value);
+export function persist_startDate(value: dayjs.Dayjs) {
+    localStorage.setItem("StartDate", value.format("YYYY-MM"));
 }
 
-export function load_startDate(): string {
-    return localStorage.getItem("StartDate") || "2017-08";
+export function load_startDate(): dayjs.Dayjs {
+    return dayjs(localStorage.getItem("StartDate") || "2017-08", "YYYY-MM");
 }
 
 export function persist_includingFloating(value: boolean) {
