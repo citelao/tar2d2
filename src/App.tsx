@@ -121,7 +121,7 @@ function App() {
       return 200;
     }
   };
-  const totalHours = getTotalHours(dayjs(startDate, "YYYY-MM")) + (includeFloating ? 3 * 8: 0);
+  const totalHours = getTotalHours(dayjs(startDate, "YYYY-MM")) + (includeFloating ? 2 * 8: 0);
   const totalDays = (totalHours / 8);
   const remainingHours = totalHours - usedHours;
   const remainingDays = (remainingHours / 8);
