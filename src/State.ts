@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs'
 import IDaysArray from "./DaysArray";
 
 export function persist_daysArray(value: IDaysArray)

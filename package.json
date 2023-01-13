@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://ben.stolovitz.com/tar2d2/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

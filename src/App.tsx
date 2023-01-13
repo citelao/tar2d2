@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 import './App.css'
-import * as dayjs from 'dayjs'
-import * as weekday from 'dayjs/plugin/weekday';
+import dayjs from 'dayjs'
+import weekday from 'dayjs/plugin/weekday';
 import { classes, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
 import IDaysArray from './DaysArray';
