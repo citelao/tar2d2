@@ -214,7 +214,7 @@ function App() {
 
               return <div>
                 <b>{m.monthD.format("MMMM")}</b>
-                <table className='max-w-xs table-auto'>
+                <table className='max-w-xs table-auto border-spacing-0 border-collapse'>
                   <thead>
                     <tr className=''>
                       {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-slate-300' title={dayjs().weekday(i).format("dddd")} aria-label={dayjs().weekday(i).format("dddd")}>{dayjs().weekday(i).format("dd")}</th>)}
@@ -231,22 +231,25 @@ function App() {
                           const hasOff = get_time_off(data, d) !== 0;
                           const isAutomatic = isAlreadyOff(d);
                           const isToday = d.isSame(dayjs(), "day");
-                          return <td className={classes([
-                              'p-3 px-4 text-right',
-                              (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
-                              (isAutomatic) ? "text-slate-300" : null,
-                              (isToday) ? "border-2 font-bold" : null,
-                              (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
-                            ])}
-                            onClick={() => {
-                              if (!isAutomatic) {
-                                if (hasOff) {
-                                  setData(set_time_off(data, d, 0));
-                                } else {
-                                  setData(set_time_off(data, d, 8));
+                          return <td className='p-0 m-0'>
+                              <button className={classes([
+                                'text-right rounded-none m-0 w-full p-3 px-4',
+                                (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200 bg-inherit",
+                                (isAutomatic) ? "text-slate-300" : null,
+                                (isToday) ? "border-2 font-bold" : "border-0",
+                                (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
+                              ])}
+                              disabled={isAutomatic}
+                              onClick={() => {
+                                if (!isAutomatic) {
+                                  if (hasOff) {
+                                    setData(set_time_off(data, d, 0));
+                                  } else {
+                                    setData(set_time_off(data, d, 8));
+                                  }
                                 }
-                              }
-                            }}>{d.date()}</td>;
+                              }}>{d.date()}</button>
+                            </td>;
                         })}
                       </tr>;
                     })}
