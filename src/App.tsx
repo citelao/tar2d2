@@ -37,6 +37,7 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
 
 function App() {
   const [data, setData] = useState<IDaysArray>(load_daysArray());
+  const [backup, setBackup] = useState<IDaysArray | null>(null);
   const [viewDate, setViewDate] = useState(dayjs().startOf("year"));
   useEffect(() => {
     persist_daysArray(data);
@@ -195,12 +196,26 @@ function App() {
                   onChange={(e) => {
                     setIncludingFloating(e.target.checked);
                   }} />
-                Include floating holidays <span className='text-slate-400'>(3 days/24 hours)</span></label>
+                Include floating holidays <span className='text-slate-400'>(3 days/24 hours)</span>
+              </label>
+
+              <button onClick={() => {
+                const hasBackup = backup !== null;
+                if (hasBackup) {
+                  setData(backup);
+                  setBackup(null);
+                } else {
+                  setBackup(data);
+                  setData([]);
+                }
+              }}>{(backup === null) ? "Reset data" : "Undo reset"}</button>
             </div>
           </div>
 
         <div className=''>
           <h2 className='font-bold text-3xl my-3'>{viewDate.year()}</h2>
+          {/* <button>Reset {viewDate.year()}</button> */}
+
           {
             getDaysForYearByMonth(currentYear).map((m) => {
               const daysFromStartOfWeek = m.days[0].weekday();
@@ -213,7 +228,10 @@ function App() {
               ]);
 
               return <div>
-                <b>{m.monthD.format("MMMM")}</b>
+                <div>
+                  <b>{m.monthD.format("MMMM")}</b>
+                  {/* <button>Reset month</button> */}
+                </div>
                 <table className='max-w-xs table-auto border-spacing-0 border-collapse'>
                   <thead>
                     <tr className=''>
