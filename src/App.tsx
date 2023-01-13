@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import * as dayjs from 'dayjs'
 import * as weekday from 'dayjs/plugin/weekday';
-import { classes, times } from './utils';
+import { classes, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
 import IDaysArray from './DaysArray';
 
@@ -205,35 +205,53 @@ function App() {
             getDaysForYearByMonth(currentYear).map((m) => {
               const daysFromStartOfWeek = m.days[0].weekday();
               const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].weekday();
+
+              const weeks = split(7, [
+                ... times(daysFromStartOfWeek, () => null),
+                ... m.days,
+                ... times(daysFromEndOfWeek, () => null)
+              ]);
+
               return <div>
                 <b>{m.monthD.format("MMMM")}</b>
-                {/* TODO: actual table for accessibility */}
-                <div className="flex flex-wrap max-w-xs">
-                  {times(7, (i) => <div className='flex-1 basis-1/7 p-2 text-right text-slate-300'>{dayjs().weekday(i).format("dd")}</div>)}
-                  {times(daysFromStartOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
-                  {m.days.map((d) => {
-                    const hasOff = get_time_off(data, d) !== 0;
-                    const isAutomatic = isAlreadyOff(d);
-                    const isToday = d.isSame(dayjs(), "day");
-                    return <div className={classes([
-                        'flex-1 basis-1/7 p-2 text-right',
-                        (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
-                        (isAutomatic) ? "text-slate-300" : null,
-                        (isToday) ? "border-2 font-bold" : null,
-                        (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
-                      ])}
-                      onClick={() => {
-                        if (!isAutomatic) {
-                          if (hasOff) {
-                            setData(set_time_off(data, d, 0));
-                          } else {
-                            setData(set_time_off(data, d, 8));
+                <table className='max-w-xs table-auto'>
+                  <thead>
+                    <tr className=''>
+                      {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-slate-300'>{dayjs().weekday(i).format("dd")}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {weeks.map((w) => {
+                      return <tr className=''>
+                        {w.map((d) => {
+                          if (d === null) {
+                            return <td>&nbsp;</td>;
                           }
-                        }
-                      }}>{d.date()}</div>;
-                  })}
-                  {times(daysFromEndOfWeek, () => <div className='flex-1 basis-1/7 p-2' />)}
-                </div>
+
+                          const hasOff = get_time_off(data, d) !== 0;
+                          const isAutomatic = isAlreadyOff(d);
+                          const isToday = d.isSame(dayjs(), "day");
+                          return <td className={classes([
+                              'p-3 px-4 text-right',
+                              (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
+                              (isAutomatic) ? "text-slate-300" : null,
+                              (isToday) ? "border-2 font-bold" : null,
+                              (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
+                            ])}
+                            onClick={() => {
+                              if (!isAutomatic) {
+                                if (hasOff) {
+                                  setData(set_time_off(data, d, 0));
+                                } else {
+                                  setData(set_time_off(data, d, 8));
+                                }
+                              }
+                            }}>{d.date()}</td>;
+                        })}
+                      </tr>;
+                    })}
+                  </tbody>
+                </table>
               </div>;
             })
           }
