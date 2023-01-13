@@ -8,6 +8,8 @@ We like to track our time off. This tool helps you do it.
 
 It stores everything in LocalStorage, so your data is private.
 
+![Screenshot of the calendar view](./doc/screenshot.png)
+
 ## Development
 
 It's just vite.js:
