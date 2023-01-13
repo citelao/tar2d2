@@ -217,7 +217,7 @@ function App() {
                 <table className='max-w-xs table-auto'>
                   <thead>
                     <tr className=''>
-                      {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-slate-300'>{dayjs().weekday(i).format("dd")}</th>)}
+                      {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-slate-300' title={dayjs().weekday(i).format("dddd")} aria-label={dayjs().weekday(i).format("dddd")}>{dayjs().weekday(i).format("dd")}</th>)}
                     </tr>
                   </thead>
                   <tbody>
