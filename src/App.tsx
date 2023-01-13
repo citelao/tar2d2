@@ -83,7 +83,7 @@ function App() {
     dayjs("2023-01-16", "YYYY-MM-DD"),
     dayjs("2023-02-20", "YYYY-MM-DD"),
     dayjs("2023-05-29", "YYYY-MM-DD"),
-    dayjs("2023-06-04", "YYYY-MM-DD"),
+    dayjs("2023-07-04", "YYYY-MM-DD"),
     dayjs("2023-09-04", "YYYY-MM-DD"),
     dayjs("2023-11-23", "YYYY-MM-DD"),
     dayjs("2023-11-24", "YYYY-MM-DD"),
