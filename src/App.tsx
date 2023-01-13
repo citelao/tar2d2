@@ -131,8 +131,8 @@ function App() {
       <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
           <div>
             <div className='md:fixed top-10 flex flex-col gap-4'>
-              <h1 className="text-3xl font-bold">Porta-TAR calculator</h1>
-              <p>Yo, I heard you like tracking your vacation</p>
+              <h1 className="text-3xl font-bold">TAR2-D2</h1>
+              <p>A simple vacation tracker 🤖</p>
 
               <div>
                 <button onClick={() => setViewDate(viewDate.add(-1, "year"))}>&larr;</button>
