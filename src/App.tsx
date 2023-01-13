@@ -235,7 +235,9 @@ function App() {
                   {/* <button>Reset month</button> */}
                 </div>
                 {/* TODO: arrow keys, home and end, tab support */}
-                {/* Support shift-click! */}
+                {/* TODO: Support shift-click! */}
+                {/* TODO: show one month before and after year? */}
+                {/* TODO: explain holidays */}
                 <table className='max-w-xs table-auto border-spacing-0 border-collapse'>
                   <thead>
                     <tr className=''>
