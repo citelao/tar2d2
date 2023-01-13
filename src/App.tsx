@@ -200,6 +200,7 @@ function App() {
           </div>
 
         <div className=''>
+          <h2 className='font-bold text-3xl my-3'>{viewDate.year()}</h2>
           {
             getDaysForYearByMonth(currentYear).map((m) => {
               const daysFromStartOfWeek = m.days[0].weekday();
@@ -213,10 +214,13 @@ function App() {
                   {m.days.map((d) => {
                     const hasOff = get_time_off(data, d) !== 0;
                     const isAutomatic = isAlreadyOff(d);
+                    const isToday = d.isSame(dayjs(), "day");
                     return <div className={classes([
                         'flex-1 basis-1/7 p-2 text-right',
                         (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200",
                         (isAutomatic) ? "text-slate-300" : null,
+                        (isToday) ? "border-2 font-bold" : null,
+                        // (isToday && hasOff) ? "bg-emerald-400" : null
                       ])}
                       onClick={() => {
                         if (!isAutomatic) {
