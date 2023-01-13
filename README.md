@@ -2,6 +2,8 @@
 
 Simple TAR (Time and Absence Reporting) replacement for tracking your time off.
 
+[ben.stolovitz.com/tar2d2/](https://ben.stolovitz.com/tar2d2/)
+
 ## Intro
 
 We like to track our time off. This tool helps you do it.
