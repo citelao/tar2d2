@@ -287,15 +287,15 @@ function App() {
 
       <hr />
 
-      <h2>Known vacations</h2>
+      <h2 className='font-bold'>Known vacations</h2>
       <ul>
         {known_holidays.map((d) => {
-          return <li>{d.format("YYYY-MM-DD")}</li>;
+          return <li>{d.format("MMMM D, YYYY")}</li>;
         })}
       </ul>
 
       <h2>Accrual rates</h2>
-      <p>(via <a href="https://microsoft.sharepoint.com/sites/HRweb/SitePages/FAQ_DTO.aspx">Discretionary Time Off (DTO) FAQ</a>)</p>
+      <p className='text-slate-400'>(via <a href="https://microsoft.sharepoint.com/sites/HRweb/SitePages/FAQ_DTO.aspx">Discretionary Time Off (DTO) FAQ</a>)</p>
       <table>
         <thead>
           <tr>
@@ -329,6 +329,10 @@ function App() {
       // period. This new accrual rate will be in effect for the last four pay
       // periods of 2022 (11/15, 11/30, 12/15, and 12/31). You would then be able to
       // carry over up to 160 hours of vacation into 2023. */}
+      <hr />
+      <footer className='my-3'>
+        By <a href="https://ben.stolovitz.com">Ben Stolovitz</a> | <a href="https://github.com/citelao/tar2d2">Source code</a> (Contributions welcome!)
+      </footer>
     </>
   );
 }
