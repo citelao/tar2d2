@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 import './App.css'
 import * as dayjs from 'dayjs'
 import * as weekday from 'dayjs/plugin/weekday';
 import { classes, times } from './utils';
+import { load_includingFloating, load_startDate, persist_includingFloating, persist_startDate } from './State';
 
 dayjs.extend(weekday);
 
@@ -39,10 +40,15 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
 }
 
 function App() {
-  const [count, setCount] = useState(0)
   const [data, setData] = useState<IDaysArray>([]);
-  const [startDate, setStartDate] = useState("2017-08");
-  const [includeFloating, setIncludingFloating] = useState(true);
+  const [startDate, setStartDate] = useState(load_startDate());
+  useEffect(() => {
+    persist_startDate(startDate);
+  }, [startDate]);
+  const [includeFloating, setIncludingFloating] = useState(load_includingFloating());
+  useEffect(() => {
+    persist_includingFloating(includeFloating);
+  }, [includeFloating]);
 
   // TODO:
   const currentYear = (new Date()).getFullYear();
