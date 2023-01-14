@@ -162,15 +162,20 @@ function MonthTable(props: IMonthTableProps) {
                 <button
                   onKeyDown={onButtonKeyDown}
                   className={classes([
-                    'text-right rounded-none m-0 w-full p-3 px-4',
-                    (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700 bg-inherit",
-                    (isAutomatic) ? "text-deemphasis" : null,
-                    (isToday) ? "border-2 font-bold" : "border-0",
+                    'text-right rounded-none m-0 w-full p-3 px-4 border-2',
+                    (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700",
+                    (isAutomatic) ? "bg-emerald-900 text-deemphasis" : null,
+                    (hasOff || isAutomatic) ? null : "bg-inherit",
+                    (isToday) ? "font-bold" : "border-transparent",
                     (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                   ])}
                   data-day={d.format("YYYY-MM-DD")}
                   aria-disabled={isAutomatic}
-                  aria-label={d.format("Do")}
+                  aria-label={[
+                    d.format("Do"),
+                    (hasOff) ? "Vacation" : undefined,
+                    (isAutomatic) ? "Holiday" : undefined,
+                  ].join(" ")}
                   tabIndex={(isLastFocused) ? 0 : -1}
                   onClick={() => props.onClick(d) }>
                     {d.date()}
@@ -287,12 +292,20 @@ function App() {
               <p>A simple vacation tracker 🤖</p>
 
               <div>
-                <button onClick={() => setViewDate(viewDate.add(-1, "year"))}>&larr;</button>
+                <button
+                  title="Previous year"
+                  onClick={() => setViewDate(viewDate.add(-1, "year"))}>
+                    &larr;
+                </button>
                 <label>
                   Year:
                   <input type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
                 </label>
-                <button onClick={() => setViewDate(viewDate.add(1, "year"))}>&rarr;</button>
+                <button
+                  title="Next year"
+                  onClick={() => setViewDate(viewDate.add(1, "year"))}>
+                    &rarr;
+                </button>
                 {(doesYearHaveHolidays(viewDate.year())) 
                   ? null
                   : <div className='bg-yellow-300 dark:bg-yellow-800 p-2 my-2'>I don't know about holidays for {viewDate.year()}!</div>
