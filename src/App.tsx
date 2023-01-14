@@ -45,7 +45,23 @@ interface IMonthTableProps {
 }
 
 function MonthTable(props: IMonthTableProps) {
-  const [focused, setFocused] = useState<number | null>(null);
+  const findFirstSelectableDateInRange = (days: dayjs.Dayjs[]): dayjs.Dayjs => {
+    let currentDayIndex = 0;
+    while(currentDayIndex < days.length)
+    {
+      const currentDay = days[currentDayIndex];
+      if (!props.isDayAlreadyOff(currentDay))
+      {
+        return currentDay;
+      }
+
+      currentDayIndex++;
+    }
+
+    throw new Error(`No available dates in ${days}`);
+  };
+
+  const [focusedDate, setFocusedDate] = useState<dayjs.Dayjs>(findFirstSelectableDateInRange(props.days));
 
   const daysFromStartOfWeek = props.days[0].weekday();
   const daysFromEndOfWeek = 7 - props.days[props.days.length - 1].weekday();
@@ -132,8 +148,7 @@ function MonthTable(props: IMonthTableProps) {
             const hasOff = props.isDayOff(d);
             const isAutomatic = props.isDayAlreadyOff(d);
             const isToday = d.isSame(dayjs(), "day");
-            const isFirstDate = wIndex === 0 && !didPrintFirstDate;
-            didPrintFirstDate = true;
+            const isLastFocused = focusedDate === d;
             return <td className='p-0 m-0'>
                 <button
                   onKeyDown={onButtonKeyDown}
@@ -145,7 +160,7 @@ function MonthTable(props: IMonthTableProps) {
                     (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                   ])}
                   aria-disabled={isAutomatic}
-                  tabIndex={(isFirstDate) ? 0 : -1}
+                  tabIndex={(isLastFocused) ? 0 : -1}
                   onClick={() => props.onClick(d) }>
                     {d.date()}
                 </button>
