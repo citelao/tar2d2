@@ -255,8 +255,6 @@ function App() {
                   }
                 }
 
-                // console.log("Focus element:", focusElement);
-
                 if (focusElement) {
                   focusElement.focus();
                   return true;
@@ -321,7 +319,8 @@ function App() {
                                 (isToday) ? "border-2 font-bold" : "border-0",
                                 (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                               ])}
-                              disabled={isAutomatic}
+                              aria-disabled={isAutomatic}
+                              tabIndex={0}
                               onClick={() => {
                                 if (!isAutomatic) {
                                   if (hasOff) {
