@@ -76,10 +76,10 @@ function MonthTable(props: IMonthTableProps) {
     return el.tagName === "BUTTON";
   };
 
-  const navigate = (el: HTMLButtonElement, dir: { x: number, y: number}): boolean => {
+  const navigate = (el: HTMLButtonElement, dir: { x: number, y: number}): HTMLButtonElement | null => {
     if (dir.x && dir.y) {
       // TODO: unhandled.
-      return false;
+      return null;
     }
 
     let cell = navigateTable(el.parentElement as HTMLTableCellElement, dir);
@@ -95,29 +95,36 @@ function MonthTable(props: IMonthTableProps) {
 
     if (focusElement) {
       focusElement.focus();
-      return true;
+      return focusElement;
     } else {
       // We failed to navigate
-      return false;
+      return null;
     }
+  };
+
+  const getDirection = (key: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown") => {
+    if (key === "ArrowLeft") {
+      return { x: -1, y: 0};
+    } else if (key === "ArrowRight") {
+      return { x: 1, y: 0};
+    } else if (key === "ArrowUp") {
+      return { x: 0, y: -1};
+    } else if (key === "ArrowDown") {
+      return { x: 0, y: 1};
+    }
+
+    throw new Error(`Invalid key ${key}`);
   };
 
   const onButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     // console.log(e.key);
-    if (e.key === "ArrowLeft") {
-      if (navigate(e.currentTarget, { x: -1, y: 0})) {
-        e.preventDefault();
-      }
-    } else if (e.key === "ArrowRight") {
-      if (navigate(e.currentTarget, { x: 1, y: 0})) {
-        e.preventDefault();
-      }
-    } else if (e.key === "ArrowUp") {
-      if (navigate(e.currentTarget, { x: 0, y: -1})) {
-        e.preventDefault();
-      }
-    } else if (e.key === "ArrowDown") {
-      if (navigate(e.currentTarget, { x: 0, y: 1})) {
+    if (e.key === "ArrowLeft" ||
+        e.key === "ArrowRight" ||
+        e.key === "ArrowUp" ||
+        e.key === "ArrowDown") {
+      let navigationTo = navigate(e.currentTarget, getDirection(e.key));
+      if (navigationTo) {
+        setFocusedDate(dayjs(navigationTo.dataset["day"], "YYYY-MM-DD"));
         e.preventDefault();
       }
     }
@@ -148,7 +155,7 @@ function MonthTable(props: IMonthTableProps) {
             const hasOff = props.isDayOff(d);
             const isAutomatic = props.isDayAlreadyOff(d);
             const isToday = d.isSame(dayjs(), "day");
-            const isLastFocused = focusedDate === d;
+            const isLastFocused = focusedDate.isSame(d, "day");
             return <td className='p-0 m-0'>
                 <button
                   onKeyDown={onButtonKeyDown}
@@ -159,6 +166,7 @@ function MonthTable(props: IMonthTableProps) {
                     (isToday) ? "border-2 font-bold" : "border-0",
                     (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                   ])}
+                  data-day={d.format("YYYY-MM-DD")}
                   aria-disabled={isAutomatic}
                   tabIndex={(isLastFocused) ? 0 : -1}
                   onClick={() => props.onClick(d) }>
