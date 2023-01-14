@@ -23,3 +23,14 @@ export function split<T>(groupsOf: number, arr: T[]): T[][] {
 export function classes(arr: Array<string | undefined | null>): string {
     return arr.filter((v) => !!v).join(" ");
 }
+
+export function randBetween(low: number, high: number): number {
+    return (Math.random() * (high - low)) + low;
+}
+
+export function chooseRandom<T>(arr: T[]): T {
+    const portion = 1 / arr.length;
+    const rand = Math.random();
+    const index = Math.floor(rand / portion);
+    return arr[index];
+}

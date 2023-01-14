@@ -4,7 +4,7 @@ import './App.css'
 import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import { classes, split, times } from './utils';
+import { chooseRandom, classes, randBetween, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
@@ -38,12 +38,76 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
   return [... data, { day_iso: dayIso, hours: hours }];
 }
 
+function pop_location(pos: {x: number; y: number; }) {
+  if (!document.body.animate) {
+    // Don't do this if we don't support animations
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (prefersReducedMotion.matches) {
+    // Don't animate if you prefer less motion.
+    // https://web.dev/prefers-reduced-motion/
+    return;
+  }
+
+  const emoji = chooseRandom([
+    "😀", "🥰", "🌴", "🎉", "✈️", "🛳️", "🛵", "⛱️",
+    "🪂", "🗺️", "🏝️", "🍍", "😴"]);
+
+  // https://css-tricks.com/playing-with-particles-using-the-web-animations-api/
+  const createParticle = (pos: {x: number; y: number}) => {
+    const particle = document.createElement("div");
+    const size = Math.floor(randBetween(25, 5));
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.className = "particle";
+    particle.innerText = emoji;
+    // particle.style.background = `hsl(${randBetween(90, 180)}, 70%, 60%)`;
+    const destination = {
+      x: pos.x + ((Math.random() > 0.5) 
+        ? randBetween(20, 50)
+        : randBetween(-20, -50)),
+      y: pos.y + ((Math.random() > 0.5) 
+        ? randBetween(20, 50)
+        : randBetween(-20, -50)),
+    };
+
+    const animation = particle.animate([
+      {
+        // Set the origin position of the particle
+        // We offset the particle with half its size to center it around the mouse
+        transform: `translate(${pos.x - (size / 2)}px, ${pos.y - (size / 2)}px)`,
+        opacity: 1
+      },
+      {
+        // We define the final coordinates as the second keyframe
+        transform: `translate(${destination.x}px, ${destination.y}px)`,
+        opacity: 0
+      }
+    ],
+    {
+      duration: randBetween(1000, 1500),
+      easing: 'cubic-bezier(0, .9, .57, 1)',
+      // Delay every particle with a random value from 0ms to 200ms
+      delay: Math.random() * 200
+    });
+    animation.onfinish = () => {
+      particle.remove();
+    };
+    document.body.appendChild(particle);
+  };
+
+  const particleCount = 20;
+  times(particleCount, () => createParticle(pos));
+}
+
 interface IMonthTableProps {
   month: string;
   days: dayjs.Dayjs[];
   isDayOff: (d: dayjs.Dayjs) => boolean;
   isDayAlreadyOff: (d: dayjs.Dayjs) => boolean;
-  onClick: (d: dayjs.Dayjs) => void;
+  onClick: (d: dayjs.Dayjs, pos: { x: number; y: number; }) => void;
 }
 
 function MonthTable(props: IMonthTableProps) {
@@ -167,7 +231,8 @@ function MonthTable(props: IMonthTableProps) {
                     (isAutomatic) ? "bg-zinc-100 dark:bg-zinc-900 hover:bg-sky-100 dark:hover:bg-sky-900 text-deemphasis" : null,
                     (hasOff || isAutomatic) ? null : "bg-inherit",
                     (isToday) ? "font-bold" : "border-transparent",
-                    (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
+                    (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : null,
+                    (isToday && !hasOff) ? "border-slate-300 hover:border-sky-400" : null,
                   ])}
                   data-day={d.format("YYYY-MM-DD")}
                   aria-disabled={isAutomatic}
@@ -177,7 +242,7 @@ function MonthTable(props: IMonthTableProps) {
                     (isAutomatic) ? "Holiday" : undefined,
                   ].join(" ")}
                   tabIndex={(isLastFocused) ? 0 : -1}
-                  onClick={() => props.onClick(d) }>
+                  onClick={(e) => props.onClick(d, {x: e.clientX, y: e.clientY }) }>
                     {d.date()}
                 </button>
               </td>;
@@ -388,11 +453,12 @@ function App() {
             days={m.days}
             isDayOff={isDayOff}
             isDayAlreadyOff={isAlreadyOff}
-            onClick={(d) => {
+            onClick={(d, pos) => {
               if (!isAlreadyOff(d)) {
                 if (isDayOff(d)) {
                   setData(set_time_off(data, d, 0));
                 } else {
+                  pop_location(pos);
                   setData(set_time_off(data, d, 8));
                 }
               }
