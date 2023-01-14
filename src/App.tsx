@@ -301,7 +301,8 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {weeks.map((w) => {
+                    {weeks.map((w, wIndex) => {
+                      let didPrintFirstDate = false;
                       return <tr className=''>
                         {w.map((d) => {
                           if (d === null) {
@@ -311,6 +312,8 @@ function App() {
                           const hasOff = get_time_off(data, d) !== 0;
                           const isAutomatic = isAlreadyOff(d);
                           const isToday = d.isSame(dayjs(), "day");
+                          const isFirstDate = wIndex === 0 && !didPrintFirstDate;
+                          didPrintFirstDate = true;
                           return <td className='p-0 m-0'>
                               <button onKeyDown={onButtonKeyDown} className={classes([
                                 'text-right rounded-none m-0 w-full p-3 px-4',
@@ -320,7 +323,7 @@ function App() {
                                 (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                               ])}
                               aria-disabled={isAutomatic}
-                              tabIndex={0}
+                              tabIndex={(isFirstDate) ? 0 : -1}
                               onClick={() => {
                                 if (!isAutomatic) {
                                   if (hasOff) {
