@@ -143,7 +143,7 @@ function App() {
                 <button onClick={() => setViewDate(viewDate.add(1, "year"))}>&rarr;</button>
                 {(doesYearHaveHolidays(viewDate.year())) 
                   ? null
-                  : <div className='bg-yellow-300'>I don't know about holidays for {viewDate.year()}!</div>
+                  : <div className='bg-yellow-300 dark:bg-yellow-800 p-2 my-2'>I don't know about holidays for {viewDate.year()}!</div>
                 }
               </div>
 
@@ -173,12 +173,12 @@ function App() {
                     <td className='text-right'>Remaining</td>
                     <td className={classes([
                       "text-right",
-                      (remainingHours < 0) ? "bg-red-200" : null,
+                      (remainingHours < 0) ? "bg-red" : null,
                       (remainingHours > 0) ? "bg-green" : null,
                     ])}>{remainingDays.toFixed(2)} days</td>
                     <td className={classes([
                       "text-slate-400",
-                      (remainingHours < 0) ? "bg-red-200" : null,
+                      (remainingHours < 0) ? "bg-red" : null,
                       (remainingHours > 0) ? "bg-green" : null,
                     ])}>{remainingHours} hrs</td>
                   </tr>

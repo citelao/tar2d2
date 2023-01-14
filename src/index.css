@@ -74,6 +74,11 @@
     @apply bg-emerald-300;
     @apply dark:bg-emerald-900;
   }
+
+  .bg-red {
+    @apply bg-red-200;
+    @apply dark:bg-red-900;
+  }
 }
 
 body {
