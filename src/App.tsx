@@ -6,6 +6,7 @@ import weekday from 'dayjs/plugin/weekday';
 import { classes, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
 import IDaysArray from './DaysArray';
+import { navigateTable } from './tables';
 
 dayjs.extend(weekday);
 
@@ -33,6 +34,10 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
     return clone;
   }
   return [... data, { day_iso: dayIso, hours: hours }];
+}
+
+function Calendar() {
+  
 }
 
 function App() {
@@ -229,8 +234,57 @@ function App() {
                 ... times(daysFromEndOfWeek, () => null)
               ]);
 
-              const navigate = (month: number, day: number) => {
-                
+              const isButton = (el: Element): el is HTMLButtonElement => {
+                return el.tagName === "BUTTON";
+              }
+
+              const navigate = (el: HTMLButtonElement, dir: { x: number, y: number}): boolean => {
+                if (dir.x && dir.y) {
+                  // TODO: unhandled.
+                  return false;
+                }
+
+                let cell = navigateTable(el.parentElement as HTMLTableCellElement, dir);
+                // console.log(cell);
+
+                let focusElement: HTMLButtonElement | null = null;
+                if (cell) {
+                  const child = cell.firstElementChild;
+                  if (child && isButton(child)) {
+                    focusElement = child;
+                  }
+                }
+
+                // console.log("Focus element:", focusElement);
+
+                if (focusElement) {
+                  focusElement.focus();
+                  return true;
+                } else {
+                  // We failed to navigate
+                  return false;
+                }
+              };
+
+              const onButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+                // console.log(e.key);
+                if (e.key === "ArrowLeft") {
+                  if (navigate(e.currentTarget, { x: -1, y: 0})) {
+                    e.preventDefault();
+                  }
+                } else if (e.key === "ArrowRight") {
+                  if (navigate(e.currentTarget, { x: 1, y: 0})) {
+                    e.preventDefault();
+                  }
+                } else if (e.key === "ArrowUp") {
+                  if (navigate(e.currentTarget, { x: 0, y: -1})) {
+                    e.preventDefault();
+                  }
+                } else if (e.key === "ArrowDown") {
+                  if (navigate(e.currentTarget, { x: 0, y: 1})) {
+                    e.preventDefault();
+                  }
+                }
               };
 
               return <div>
@@ -260,7 +314,7 @@ function App() {
                           const isAutomatic = isAlreadyOff(d);
                           const isToday = d.isSame(dayjs(), "day");
                           return <td className='p-0 m-0'>
-                              <button className={classes([
+                              <button onKeyDown={onButtonKeyDown} className={classes([
                                 'text-right rounded-none m-0 w-full p-3 px-4',
                                 (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700 bg-inherit",
                                 (isAutomatic) ? "text-deemphasis" : null,
