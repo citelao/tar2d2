@@ -164,7 +164,7 @@ function MonthTable(props: IMonthTableProps) {
                   className={classes([
                     'text-right rounded-none m-0 w-full p-3 px-4 border-2',
                     (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700",
-                    (isAutomatic) ? "bg-slate-100 hover:bg-sky-100 text-deemphasis" : null,
+                    (isAutomatic) ? "bg-zinc-100 dark:bg-zinc-900 hover:bg-sky-100 dark:hover:bg-sky-900 text-deemphasis" : null,
                     (hasOff || isAutomatic) ? null : "bg-inherit",
                     (isToday) ? "font-bold" : "border-transparent",
                     (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
