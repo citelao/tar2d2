@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { classes, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
 
 dayjs.extend(weekday);
+dayjs.extend(advancedFormat);
 
 // interface IData {
 //   days: IDaysArray;
@@ -168,6 +170,7 @@ function MonthTable(props: IMonthTableProps) {
                   ])}
                   data-day={d.format("YYYY-MM-DD")}
                   aria-disabled={isAutomatic}
+                  aria-label={d.format("Do")}
                   tabIndex={(isLastFocused) ? 0 : -1}
                   onClick={() => props.onClick(d) }>
                     {d.date()}
