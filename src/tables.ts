@@ -36,6 +36,8 @@ export function TryGetColumnForRow(row: HTMLTableRowElement, columnIndex: number
         currentColIndex += currentCol.colSpan;
         currentCol = currentCol.nextElementSibling;
     }
+
+    return null;
 }
 
 export function navigateTable(el: HTMLTableCellElement, dir: {x: number, y: number}): HTMLTableCellElement | null {
