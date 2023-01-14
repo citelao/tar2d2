@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 // import reactLogo from './assets/react.svg'
 import './App.css'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
 import { classes, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
@@ -36,8 +36,125 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
   return [... data, { day_iso: dayIso, hours: hours }];
 }
 
-function Calendar() {
-  
+interface IMonthTableProps {
+  month: string;
+  days: dayjs.Dayjs[];
+  isDayOff: (d: dayjs.Dayjs) => boolean;
+  isDayAlreadyOff: (d: dayjs.Dayjs) => boolean;
+  onClick: (d: dayjs.Dayjs) => void;
+}
+
+function MonthTable(props: IMonthTableProps) {
+  const [focused, setFocused] = useState<number | null>(null);
+
+  const daysFromStartOfWeek = props.days[0].weekday();
+  const daysFromEndOfWeek = 7 - props.days[props.days.length - 1].weekday();
+
+  const weeks = split(7, [
+    ... times(daysFromStartOfWeek, () => null),
+    ... props.days,
+    ... times(daysFromEndOfWeek, () => null)
+  ]);
+
+  const isButton = (el: Element): el is HTMLButtonElement => {
+    return el.tagName === "BUTTON";
+  };
+
+  const navigate = (el: HTMLButtonElement, dir: { x: number, y: number}): boolean => {
+    if (dir.x && dir.y) {
+      // TODO: unhandled.
+      return false;
+    }
+
+    let cell = navigateTable(el.parentElement as HTMLTableCellElement, dir);
+    // console.log(cell);
+
+    let focusElement: HTMLButtonElement | null = null;
+    if (cell) {
+      const child = cell.firstElementChild;
+      if (child && isButton(child)) {
+        focusElement = child;
+      }
+    }
+
+    if (focusElement) {
+      focusElement.focus();
+      return true;
+    } else {
+      // We failed to navigate
+      return false;
+    }
+  };
+
+  const onButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    // console.log(e.key);
+    if (e.key === "ArrowLeft") {
+      if (navigate(e.currentTarget, { x: -1, y: 0})) {
+        e.preventDefault();
+      }
+    } else if (e.key === "ArrowRight") {
+      if (navigate(e.currentTarget, { x: 1, y: 0})) {
+        e.preventDefault();
+      }
+    } else if (e.key === "ArrowUp") {
+      if (navigate(e.currentTarget, { x: 0, y: -1})) {
+        e.preventDefault();
+      }
+    } else if (e.key === "ArrowDown") {
+      if (navigate(e.currentTarget, { x: 0, y: 1})) {
+        e.preventDefault();
+      }
+    }
+  };
+
+  return <table className='max-w-xs table-auto border-spacing-0 border-collapse'>
+    {/* TODO: arrow keys, home and end, tab support */}
+    {/* TODO: Support shift-click! */}
+    {/* TODO: show one month before and after year? */}
+    {/* TODO: explain holidays */}
+    <caption className='font-bold text-left mt-2'>
+      {props.month}
+    </caption>
+    <thead>
+      <tr className=''>
+        {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-deemphasis' title={dayjs().weekday(i).format("dddd")} aria-label={dayjs().weekday(i).format("dddd")}>{dayjs().weekday(i).format("dd")}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {weeks.map((w, wIndex) => {
+        let didPrintFirstDate = false;
+        return <tr className=''>
+          {w.map((d) => {
+            if (d === null) {
+              return <td>&nbsp;</td>;
+            }
+
+            const hasOff = props.isDayOff(d);
+            const isAutomatic = props.isDayAlreadyOff(d);
+            const isToday = d.isSame(dayjs(), "day");
+            const isFirstDate = wIndex === 0 && !didPrintFirstDate;
+            didPrintFirstDate = true;
+            return <td className='p-0 m-0'>
+                <button
+                  onKeyDown={onButtonKeyDown}
+                  className={classes([
+                    'text-right rounded-none m-0 w-full p-3 px-4',
+                    (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700 bg-inherit",
+                    (isAutomatic) ? "text-deemphasis" : null,
+                    (isToday) ? "border-2 font-bold" : "border-0",
+                    (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
+                  ])}
+                  aria-disabled={isAutomatic}
+                  tabIndex={(isFirstDate) ? 0 : -1}
+                  onClick={() => props.onClick(d) }>
+                    {d.date()}
+                </button>
+              </td>;
+          })}
+        </tr>;
+      })}
+    </tbody>
+  </table>;
 }
 
 function App() {
@@ -110,6 +227,10 @@ function App() {
 
   const isAlreadyOff = (day: dayjs.Dayjs): boolean => {
     return isWeekend(day) || isHoliday(day);
+  }
+
+  const isDayOff = (day: dayjs.Dayjs): boolean => {
+    return get_time_off(data, day) !== 0;
   }
 
   const usedHours = data.reduce((acc, v) => { return acc + v.hours }, 0);
@@ -223,125 +344,21 @@ function App() {
           <h2 className='font-bold text-3xl my-3'>{viewDate.year()}</h2>
           {/* <button>Reset {viewDate.year()}</button> */}
 
-          {
-            getDaysForYearByMonth(currentYear).map((m) => {
-              const daysFromStartOfWeek = m.days[0].weekday();
-              const daysFromEndOfWeek = 7 - m.days[m.days.length - 1].weekday();
-
-              const weeks = split(7, [
-                ... times(daysFromStartOfWeek, () => null),
-                ... m.days,
-                ... times(daysFromEndOfWeek, () => null)
-              ]);
-
-              const isButton = (el: Element): el is HTMLButtonElement => {
-                return el.tagName === "BUTTON";
-              }
-
-              const navigate = (el: HTMLButtonElement, dir: { x: number, y: number}): boolean => {
-                if (dir.x && dir.y) {
-                  // TODO: unhandled.
-                  return false;
-                }
-
-                let cell = navigateTable(el.parentElement as HTMLTableCellElement, dir);
-                // console.log(cell);
-
-                let focusElement: HTMLButtonElement | null = null;
-                if (cell) {
-                  const child = cell.firstElementChild;
-                  if (child && isButton(child)) {
-                    focusElement = child;
-                  }
-                }
-
-                if (focusElement) {
-                  focusElement.focus();
-                  return true;
+          {getDaysForYearByMonth(currentYear).map((m) => <MonthTable
+            month={m.monthD.format("MMMM")}
+            days={m.days}
+            isDayOff={isDayOff}
+            isDayAlreadyOff={isAlreadyOff}
+            onClick={(d) => {
+              if (!isAlreadyOff(d)) {
+                if (isDayOff(d)) {
+                  setData(set_time_off(data, d, 0));
                 } else {
-                  // We failed to navigate
-                  return false;
+                  setData(set_time_off(data, d, 8));
                 }
-              };
-
-              const onButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-                // console.log(e.key);
-                if (e.key === "ArrowLeft") {
-                  if (navigate(e.currentTarget, { x: -1, y: 0})) {
-                    e.preventDefault();
-                  }
-                } else if (e.key === "ArrowRight") {
-                  if (navigate(e.currentTarget, { x: 1, y: 0})) {
-                    e.preventDefault();
-                  }
-                } else if (e.key === "ArrowUp") {
-                  if (navigate(e.currentTarget, { x: 0, y: -1})) {
-                    e.preventDefault();
-                  }
-                } else if (e.key === "ArrowDown") {
-                  if (navigate(e.currentTarget, { x: 0, y: 1})) {
-                    e.preventDefault();
-                  }
-                }
-              };
-
-              return <div>
-                <div>
-                  <b>{m.monthD.format("MMMM")}</b>
-                  {/* <button>Reset month</button> */}
-                </div>
-                {/* TODO: arrow keys, home and end, tab support */}
-                {/* TODO: Support shift-click! */}
-                {/* TODO: show one month before and after year? */}
-                {/* TODO: explain holidays */}
-                <table className='max-w-xs table-auto border-spacing-0 border-collapse'>
-                  <thead>
-                    <tr className=''>
-                      {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-deemphasis' title={dayjs().weekday(i).format("dddd")} aria-label={dayjs().weekday(i).format("dddd")}>{dayjs().weekday(i).format("dd")}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {weeks.map((w, wIndex) => {
-                      let didPrintFirstDate = false;
-                      return <tr className=''>
-                        {w.map((d) => {
-                          if (d === null) {
-                            return <td>&nbsp;</td>;
-                          }
-
-                          const hasOff = get_time_off(data, d) !== 0;
-                          const isAutomatic = isAlreadyOff(d);
-                          const isToday = d.isSame(dayjs(), "day");
-                          const isFirstDate = wIndex === 0 && !didPrintFirstDate;
-                          didPrintFirstDate = true;
-                          return <td className='p-0 m-0'>
-                              <button onKeyDown={onButtonKeyDown} className={classes([
-                                'text-right rounded-none m-0 w-full p-3 px-4',
-                                (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700 bg-inherit",
-                                (isAutomatic) ? "text-deemphasis" : null,
-                                (isToday) ? "border-2 font-bold" : "border-0",
-                                (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
-                              ])}
-                              aria-disabled={isAutomatic}
-                              tabIndex={(isFirstDate) ? 0 : -1}
-                              onClick={() => {
-                                if (!isAutomatic) {
-                                  if (hasOff) {
-                                    setData(set_time_off(data, d, 0));
-                                  } else {
-                                    setData(set_time_off(data, d, 8));
-                                  }
-                                }
-                              }}>{d.date()}</button>
-                            </td>;
-                        })}
-                      </tr>;
-                    })}
-                  </tbody>
-                </table>
-              </div>;
-            })
-          }
+              }
+            }}
+            />)}
         </div>
       </div>
 
