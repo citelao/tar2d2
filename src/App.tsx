@@ -174,12 +174,12 @@ function App() {
                     <td className={classes([
                       "text-right",
                       (remainingHours < 0) ? "bg-red-200" : null,
-                      (remainingHours > 0) ? "bg-emerald-300" : null,
+                      (remainingHours > 0) ? "bg-green" : null,
                     ])}>{remainingDays.toFixed(2)} days</td>
                     <td className={classes([
                       "text-slate-400",
                       (remainingHours < 0) ? "bg-red-200" : null,
-                      (remainingHours > 0) ? "bg-emerald-300" : null,
+                      (remainingHours > 0) ? "bg-green" : null,
                     ])}>{remainingHours} hrs</td>
                   </tr>
                   <tr>
@@ -190,7 +190,7 @@ function App() {
                 </tbody>
               </table>
 
-              <label>
+              <label className='cursor-pointer'>
                 <input type="checkbox"
                   checked={includeFloating}
                   onChange={(e) => {
@@ -229,6 +229,10 @@ function App() {
                 ... times(daysFromEndOfWeek, () => null)
               ]);
 
+              const navigate = (month: number, day: number) => {
+                
+              };
+
               return <div>
                 <div>
                   <b>{m.monthD.format("MMMM")}</b>
@@ -241,7 +245,7 @@ function App() {
                 <table className='max-w-xs table-auto border-spacing-0 border-collapse'>
                   <thead>
                     <tr className=''>
-                      {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-slate-300' title={dayjs().weekday(i).format("dddd")} aria-label={dayjs().weekday(i).format("dddd")}>{dayjs().weekday(i).format("dd")}</th>)}
+                      {times(7, (i) => <th className='font-normal p-3 px-4 text-right text-deemphasis' title={dayjs().weekday(i).format("dddd")} aria-label={dayjs().weekday(i).format("dddd")}>{dayjs().weekday(i).format("dd")}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -258,8 +262,8 @@ function App() {
                           return <td className='p-0 m-0'>
                               <button className={classes([
                                 'text-right rounded-none m-0 w-full p-3 px-4',
-                                (hasOff) ? "bg-emerald-300 hover:bg-sky-400" : "hover:bg-sky-200 bg-inherit",
-                                (isAutomatic) ? "text-slate-300" : null,
+                                (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700 bg-inherit",
+                                (isAutomatic) ? "text-deemphasis" : null,
                                 (isToday) ? "border-2 font-bold" : "border-0",
                                 (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : "border-slate-300 hover:border-sky-400"
                               ])}

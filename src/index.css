@@ -64,6 +64,16 @@
   input {
     @apply mx-2;
   }
+
+  .text-deemphasis {
+    @apply text-slate-300;
+    @apply dark:text-slate-600;
+  }
+
+  .bg-green {
+    @apply bg-emerald-300;
+    @apply dark:bg-emerald-900;
+  }
 }
 
 body {
