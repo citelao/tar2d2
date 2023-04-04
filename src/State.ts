@@ -11,13 +11,17 @@ export function persist_daysArray(value: IDaysArray)
     localStorage.setItem("days", serialize_daysArray(value));
 }
 
+export function deserialize_daysArray(str: string): IDaysArray {
+    return JSON.parse(str) as IDaysArray;
+}
+
 export function load_daysArray(): IDaysArray
 {
     const read = localStorage.getItem("days");
     if (!read) {
         return [];
     }
-    return JSON.parse(read) as IDaysArray;
+    return deserialize_daysArray(read);
 }
 
 export function persist_startDate(value: dayjs.Dayjs) {

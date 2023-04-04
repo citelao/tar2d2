@@ -5,7 +5,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { chooseRandom, classes, randBetween, split, times } from './utils';
-import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate, serialize_daysArray } from './State';
+import { deserialize_daysArray, load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate, serialize_daysArray } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
 import { downloadFile, readFile } from './files';
@@ -370,7 +370,7 @@ function App() {
 
     const file = e.target.files[0];
     const content = await readFile(file);
-    console.log(content);
+    setData(deserialize_daysArray(content));
   };
 
   return (
@@ -458,7 +458,7 @@ function App() {
                 <label htmlFor='import' className='labelButton grow'>
                   Load
                 </label>
-                <input id="import" type="file" className='hidden' onChange={handleImport}/>
+                <input id="import" type="file" accept='application/json' className='hidden' onChange={handleImport}/>
                 <button onClick={onDownload} className="grow">Save</button>
               </div>
 
