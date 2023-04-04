@@ -396,23 +396,23 @@ function App() {
 
   return (
     <>
-      <div className='md:grid gap-4 md:grid-cols-[360px_1fr] pb-4'>
+      <div className='md:grid gap-4 md:grid-cols-[330px_1fr] pb-4'>
           {/* Spare div to declare a "column" */}
           <div>
-            <div className='md:sticky md:w-[360px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
+            <div className='md:sticky md:w-[330px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
               <h1 className="text-3xl font-bold">TAR2-D2</h1>
               <p>A simple vacation tracker 🤖</p>
 
-              <div>
+              <div className='flex items-baseline'>
                 <button
                   title="Previous year"
                   onClick={() => setViewDate(viewDate.add(-1, "year"))}>
                     &larr;
                 </button>
-                <label>
+                <label className='grow' htmlFor='year'>
                   Year:
-                  <input type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
                 </label>
+                <input id="year" className='grow' type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
                 <button
                   title="Next year"
                   onClick={() => setViewDate(viewDate.add(1, "year"))}>
@@ -424,12 +424,12 @@ function App() {
                 }
               </div>
 
-              <div>
-                <label>
+              <div className='flex items-baseline'>
+                <label htmlFor='startDate' className='shrink-0'>
                   Start date:
-                  <input type="month" value={startDate.format("YYYY-MM")} onChange={(e) => setStartDate(dayjs(e.target.value, "YYYY-MM"))} />
                 </label>
-                <span className='text-slate-400'>&rarr; {getYearsWorked(startDate)} years</span>
+                <input type="month" className='shrink' id="startDate" value={startDate.format("YYYY-MM")} onChange={(e) => setStartDate(dayjs(e.target.value, "YYYY-MM"))} />
+                <span className='text-slate-400 shrink-0'>&rarr; {getYearsWorked(startDate)} years</span>
               </div>
 
               <table>

@@ -111,6 +111,10 @@ details {
   padding: 0;
 }
 
+input {
+  min-width: 0px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
