@@ -281,6 +281,11 @@ function App() {
     persist_includingFloating(includeFloating);
   }, [includeFloating]);
 
+  // Tell between the two types of backups---one's taken on clearing data, one's
+  // taken on loading new data.
+  const hasClearBackup = backup !== null && backupType === "Clear";
+  const hasLoadBackup = backup !== null && backupType === "Load";
+
   // TODO:
   const currentYear = viewDate.year();
 
@@ -380,6 +385,16 @@ function App() {
     setData(deserialize_daysArray(content));
   };
 
+  const handleUndoImport = () => {
+    if (!backup) {
+      throw new Error("No backup to restore.");
+    }
+
+    setData(backup);
+    setBackup(null);
+    setBackupType(null);
+  };
+
   return (
     <>
       <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
@@ -466,6 +481,9 @@ function App() {
                   Load
                 </label>
                 <input id="import" type="file" accept='application/json' className='hidden' onChange={handleImport}/>
+                {hasLoadBackup
+                  ? <button className='grow' onClick={handleUndoImport}>Undo load</button>
+                  : null}
                 <button onClick={onDownload} className="grow">Save</button>
               </div>
 
@@ -477,7 +495,6 @@ function App() {
                 <textarea value={jsonData} className="w-10/12" rows={10} />
 
                 <button onClick={() => {
-                  const hasClearBackup = backup !== null && backupType === "Clear";
                   if (hasClearBackup) {
                     setData(backup);
 
@@ -489,7 +506,7 @@ function App() {
                     setBackupType("Clear");
                     setData([]);
                   }
-                }}>{(backup !== null && backupType === "Clear") ? "Undo reset" : "Reset data"}</button>
+                }}>{(hasClearBackup) ? "Undo reset" : "Reset data"}</button>
               </details>
             </div>
           </div>
