@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import IDaysArray from "./DaysArray";
+import IDaysArray, { DaysArray } from "./DaysArray";
 
 export function serialize_daysArray(value: IDaysArray, indent?: number): string
 {
@@ -12,7 +12,8 @@ export function persist_daysArray(value: IDaysArray)
 }
 
 export function deserialize_daysArray(str: string): IDaysArray {
-    return JSON.parse(str) as IDaysArray;
+    const obj = JSON.parse(str);
+    return DaysArray.parse(obj);
 }
 
 export function load_daysArray(): IDaysArray
