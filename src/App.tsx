@@ -443,7 +443,13 @@ function App() {
                 Include floating holidays <span className='text-slate-400'>(2 days/16 hours)</span>
               </label>
 
-              <button onClick={onDownload}>Download</button>
+              <div className='flex gap-2'>
+                <label htmlFor='import' className='labelButton grow'>
+                  Import
+                </label>
+                <input id="import" type="file" className='hidden'/>
+                <button onClick={onDownload} className="grow">Export</button>
+              </div>
 
               <details className='w-full'>
                 <summary className='font-bold'>Advanced settings</summary>

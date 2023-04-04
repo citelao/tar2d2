@@ -24,22 +24,23 @@
     @apply p-1;
   }
 
-  button {
+  button, .labelButton {
     border-radius: 8px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
+    text-align: center;
     background-color: #1a1a1a;
     cursor: pointer;
     transition: border-color 0.25s;
   }
-  button:hover {
+  button:hover, .labelButton:hover {
     border-color: #646cff;
   }
-  button:focus,
-  button:focus-visible {
+  button:focus, .labelButton:focus
+  button:focus-visible, .labelButton:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
   }
 
@@ -113,7 +114,7 @@ a:hover {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
+  button, .labelButton {
+    @apply bg-gray-100;
   }
 }
