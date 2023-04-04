@@ -72,13 +72,11 @@ function pop_location(pos: {x: number; y: number; }) {
     particle.className = "particle";
     particle.innerText = emoji;
     // particle.style.background = `hsl(${randBetween(90, 180)}, 70%, 60%)`;
+    const distance = randBetween(20, 50);
+    const angle = randBetween(0, 2 * Math.PI);
     const destination = {
-      x: pos.x + ((Math.random() > 0.5) 
-        ? randBetween(20, 50)
-        : randBetween(-20, -50)),
-      y: pos.y + ((Math.random() > 0.5) 
-        ? randBetween(20, 50)
-        : randBetween(-20, -50)),
+      x: pos.x + distance * Math.cos(angle),
+      y: pos.y + distance * Math.sin(angle),
     };
 
     const animation = particle.animate([
