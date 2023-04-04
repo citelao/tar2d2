@@ -34,3 +34,10 @@ export function chooseRandom<T>(arr: T[]): T {
     const index = Math.floor(rand / portion);
     return arr[index];
 }
+
+export function radialPoint(origin: {x: number, y: number}, distance: number, angleRadians: number): { x: number, y: number } {
+    return {
+      x: origin.x + distance * Math.cos(angleRadians),
+      y: origin.y + distance * Math.sin(angleRadians),
+    };
+}

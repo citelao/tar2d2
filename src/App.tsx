@@ -4,7 +4,7 @@ import './App.css'
 import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import { chooseRandom, classes, randBetween, split, times } from './utils';
+import { chooseRandom, classes, radialPoint, randBetween, split, times } from './utils';
 import { deserialize_daysArray, load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate, serialize_daysArray } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
@@ -64,7 +64,7 @@ function pop_location(pos: {x: number; y: number; }) {
     "🪂", "🗺️", "🏝️", "🍍", "😴"]);
 
   // https://css-tricks.com/playing-with-particles-using-the-web-animations-api/
-  const createParticle = (pos: {x: number; y: number}) => {
+  const createParticle = (pos: {x: number; y: number}, angleRadians: number) => {
     const particle = document.createElement("div");
     const size = Math.floor(randBetween(25, 5));
     particle.style.width = `${size}px`;
@@ -73,11 +73,8 @@ function pop_location(pos: {x: number; y: number; }) {
     particle.innerText = emoji;
     // particle.style.background = `hsl(${randBetween(90, 180)}, 70%, 60%)`;
     const distance = randBetween(20, 50);
-    const angle = randBetween(0, 2 * Math.PI);
-    const destination = {
-      x: pos.x + distance * Math.cos(angle),
-      y: pos.y + distance * Math.sin(angle),
-    };
+    // const angle = randBetween(0, 2 * Math.PI);
+    const destination = radialPoint(pos, distance, angleRadians);
 
     const animation = particle.animate([
       {
@@ -105,7 +102,11 @@ function pop_location(pos: {x: number; y: number; }) {
   };
 
   const particleCount = 20;
-  times(particleCount, () => createParticle(pos));
+  times(particleCount, () => {
+    const angleRadians = randBetween(0, 2 * Math.PI);
+    const offsetPos = radialPoint(pos, randBetween(10,20), angleRadians);
+    createParticle(offsetPos, angleRadians);
+  });
 }
 
 interface IMonthTableProps {
