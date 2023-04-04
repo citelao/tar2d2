@@ -209,7 +209,7 @@ function MonthTable(props: IMonthTableProps) {
     {/* TODO: Support shift-click! */}
     {/* TODO: show one month before and after year? */}
     {/* TODO: explain holidays */}
-    <caption className='font-bold text-left mt-2'>
+    <caption className='font-bold text-left mt-3'>
       {props.month}
     </caption>
     <thead>
@@ -484,7 +484,7 @@ function App() {
                 {hasLoadBackup
                   ? <button className='grow' onClick={handleUndoImport}>Undo load</button>
                   : null}
-                <button onClick={onDownload} className="grow">Save</button>
+                <button onClick={onDownload} className="grow">Export</button>
               </div>
 
               <details className='w-full'>
