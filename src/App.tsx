@@ -397,9 +397,10 @@ function App() {
 
   return (
     <>
-      <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
+      <div className='md:grid gap-4 md:grid-cols-[360px_1fr]'>
+          {/* Spare div to declare a "column" */}
           <div>
-            <div className='md:fixed top-10 flex flex-col gap-4'>
+            <div className='md:fixed md:w-[360px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
               <h1 className="text-3xl font-bold">TAR2-D2</h1>
               <p>A simple vacation tracker 🤖</p>
 
@@ -492,7 +493,7 @@ function App() {
 
                 <label className='font-bold'>Raw JSON</label>
 
-                <textarea value={jsonData} className="w-10/12" rows={10} />
+                <textarea value={jsonData} className="w-full block" rows={8} />
 
                 <button onClick={() => {
                   if (hasClearBackup) {
