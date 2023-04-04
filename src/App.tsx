@@ -397,10 +397,10 @@ function App() {
 
   return (
     <>
-      <div className='md:grid gap-4 md:grid-cols-[360px_1fr]'>
+      <div className='md:grid gap-4 md:grid-cols-[360px_1fr] pb-4'>
           {/* Spare div to declare a "column" */}
           <div>
-            <div className='md:fixed md:w-[360px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
+            <div className='md:sticky md:w-[360px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
               <h1 className="text-3xl font-bold">TAR2-D2</h1>
               <p>A simple vacation tracker 🤖</p>
 
