@@ -33,9 +33,16 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
   const index = data.findIndex((v) => v.day_iso === dayIso);
   if (index !== -1) {
     const clone = [...data];
-    clone[index].hours = hours;
+    if (hours === 0) {
+      // Remove the item if unsetting it
+      // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
+      clone.splice(index, 1);
+    } else {
+      clone[index].hours = hours;
+    }
     return clone;
   }
+
   return [... data, { day_iso: dayIso, hours: hours }];
 }
 
