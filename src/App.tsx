@@ -370,6 +370,8 @@ function App() {
 
     const file = e.target.files[0];
     const content = await readFile(file);
+    
+    // TODO: handle parser errors
     setData(deserialize_daysArray(content));
   };
 
