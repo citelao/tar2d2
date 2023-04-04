@@ -1,9 +1,19 @@
 import dayjs from 'dayjs'
-import IDaysArray from "./DaysArray";
+import IDaysArray, { DaysArray } from "./DaysArray";
+
+export function serialize_daysArray(value: IDaysArray, indent?: number): string
+{
+    return JSON.stringify(value, undefined, indent);
+}
 
 export function persist_daysArray(value: IDaysArray)
 {
-    localStorage.setItem("days", JSON.stringify(value));
+    localStorage.setItem("days", serialize_daysArray(value));
+}
+
+export function deserialize_daysArray(str: string): IDaysArray {
+    const obj = JSON.parse(str);
+    return DaysArray.parse(obj);
 }
 
 export function load_daysArray(): IDaysArray
@@ -12,7 +22,7 @@ export function load_daysArray(): IDaysArray
     if (!read) {
         return [];
     }
-    return JSON.parse(read) as IDaysArray;
+    return deserialize_daysArray(read);
 }
 
 export function persist_startDate(value: dayjs.Dayjs) {

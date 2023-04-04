@@ -4,10 +4,11 @@ import './App.css'
 import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import { chooseRandom, classes, randBetween, split, times } from './utils';
-import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
+import { chooseRandom, classes, radialPoint, randBetween, split, times } from './utils';
+import { deserialize_daysArray, load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate, serialize_daysArray } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
+import { downloadFile, readFile } from './files';
 
 dayjs.extend(weekday);
 dayjs.extend(advancedFormat);
@@ -32,9 +33,16 @@ function set_time_off(data: IDaysArray, day: dayjs.Dayjs, hours: number): IDaysA
   const index = data.findIndex((v) => v.day_iso === dayIso);
   if (index !== -1) {
     const clone = [...data];
-    clone[index].hours = hours;
+    if (hours === 0) {
+      // Remove the item if unsetting it
+      // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
+      clone.splice(index, 1);
+    } else {
+      clone[index].hours = hours;
+    }
     return clone;
   }
+
   return [... data, { day_iso: dayIso, hours: hours }];
 }
 
@@ -56,7 +64,7 @@ function pop_location(pos: {x: number; y: number; }) {
     "🪂", "🗺️", "🏝️", "🍍", "😴"]);
 
   // https://css-tricks.com/playing-with-particles-using-the-web-animations-api/
-  const createParticle = (pos: {x: number; y: number}) => {
+  const createParticle = (pos: {x: number; y: number}, angleRadians: number) => {
     const particle = document.createElement("div");
     const size = Math.floor(randBetween(25, 5));
     particle.style.width = `${size}px`;
@@ -64,14 +72,9 @@ function pop_location(pos: {x: number; y: number; }) {
     particle.className = "particle";
     particle.innerText = emoji;
     // particle.style.background = `hsl(${randBetween(90, 180)}, 70%, 60%)`;
-    const destination = {
-      x: pos.x + ((Math.random() > 0.5) 
-        ? randBetween(20, 50)
-        : randBetween(-20, -50)),
-      y: pos.y + ((Math.random() > 0.5) 
-        ? randBetween(20, 50)
-        : randBetween(-20, -50)),
-    };
+    const distance = randBetween(20, 50);
+    // const angle = randBetween(0, 2 * Math.PI);
+    const destination = radialPoint(pos, distance, angleRadians);
 
     const animation = particle.animate([
       {
@@ -99,7 +102,11 @@ function pop_location(pos: {x: number; y: number; }) {
   };
 
   const particleCount = 20;
-  times(particleCount, () => createParticle(pos));
+  times(particleCount, () => {
+    const angleRadians = randBetween(0, 2 * Math.PI);
+    const offsetPos = radialPoint(pos, randBetween(10,20), angleRadians);
+    createParticle(offsetPos, angleRadians);
+  });
 }
 
 interface IMonthTableProps {
@@ -201,7 +208,7 @@ function MonthTable(props: IMonthTableProps) {
     {/* TODO: Support shift-click! */}
     {/* TODO: show one month before and after year? */}
     {/* TODO: explain holidays */}
-    <caption className='font-bold text-left mt-2'>
+    <caption className='font-bold text-left mt-3'>
       {props.month}
     </caption>
     <thead>
@@ -253,9 +260,13 @@ function MonthTable(props: IMonthTableProps) {
   </table>;
 }
 
+type BackupType = "Load" | "Clear";
+
 function App() {
   const [data, setData] = useState<IDaysArray>(load_daysArray());
+  const jsonData = serialize_daysArray(data);
   const [backup, setBackup] = useState<IDaysArray | null>(null);
+  const [backupType, setBackupType] = useState<BackupType | null>(null);
   const [viewDate, setViewDate] = useState(dayjs().startOf("year"));
   useEffect(() => {
     persist_daysArray(data);
@@ -268,6 +279,11 @@ function App() {
   useEffect(() => {
     persist_includingFloating(includeFloating);
   }, [includeFloating]);
+
+  // Tell between the two types of backups---one's taken on clearing data, one's
+  // taken on loading new data.
+  const hasClearBackup = backup !== null && backupType === "Clear";
+  const hasLoadBackup = backup !== null && backupType === "Load";
 
   // TODO:
   const currentYear = viewDate.year();
@@ -348,24 +364,55 @@ function App() {
   const remainingHours = totalHours - usedHours;
   const remainingDays = (remainingHours / 8);
 
+  const handleExport = () => {
+    const indentedData = serialize_daysArray(data, 4);
+    downloadFile("export.json", indentedData);
+  }
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      // TODO: clearer error handling.
+      return;
+    }
+
+    const file = e.target.files[0];
+    const content = await readFile(file);
+    
+    // TODO: handle parser errors
+    setBackup(data);
+    setBackupType("Load");
+    setData(deserialize_daysArray(content));
+  };
+
+  const handleUndoImport = () => {
+    if (!backup) {
+      throw new Error("No backup to restore.");
+    }
+
+    setData(backup);
+    setBackup(null);
+    setBackupType(null);
+  };
+
   return (
     <>
-      <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
+      <div className='md:grid gap-4 md:grid-cols-[330px_1fr] pb-4'>
+          {/* Spare div to declare a "column" */}
           <div>
-            <div className='md:fixed top-10 flex flex-col gap-4'>
+            <div className='md:sticky md:w-[330px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
               <h1 className="text-3xl font-bold">TAR2-D2</h1>
               <p>A simple vacation tracker 🤖</p>
 
-              <div>
+              <div className='flex items-baseline'>
                 <button
                   title="Previous year"
                   onClick={() => setViewDate(viewDate.add(-1, "year"))}>
                     &larr;
                 </button>
-                <label>
+                <label htmlFor='year'>
                   Year:
-                  <input type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
                 </label>
+                <input id="year" className='grow' type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
                 <button
                   title="Next year"
                   onClick={() => setViewDate(viewDate.add(1, "year"))}>
@@ -377,12 +424,12 @@ function App() {
                 }
               </div>
 
-              <div>
-                <label>
+              <div className='flex items-baseline'>
+                <label htmlFor='startDate' className='shrink-0'>
                   Start date:
-                  <input type="month" value={startDate.format("YYYY-MM")} onChange={(e) => setStartDate(dayjs(e.target.value, "YYYY-MM"))} />
                 </label>
-                <span className='text-slate-400'>&rarr; {getYearsWorked(startDate)} years</span>
+                <input type="month" className='shrink' id="startDate" value={startDate.format("YYYY-MM")} onChange={(e) => setStartDate(dayjs(e.target.value, "YYYY-MM"))} />
+                <span className='text-slate-400 shrink-0'>&rarr; {getYearsWorked(startDate)} years</span>
               </div>
 
               <table>
@@ -429,18 +476,38 @@ function App() {
                 Include floating holidays <span className='text-slate-400'>(2 days/16 hours)</span>
               </label>
 
-              <button onClick={() => {
-                const hasBackup = backup !== null;
-                if (hasBackup) {
-                  setData(backup);
+              <div className='flex gap-2'>
+                <label htmlFor='import' className='labelButton grow'>
+                  Load
+                </label>
+                <input id="import" type="file" accept='application/json' className='hidden' onChange={handleImport}/>
+                {hasLoadBackup
+                  ? <button className='grow' onClick={handleUndoImport}>Undo load</button>
+                  : null}
+                <button onClick={handleExport} className="grow">Export</button>
+              </div>
 
-                  // TODO: backup any NEW data since the reset.
-                  setBackup(null);
-                } else {
-                  setBackup(data);
-                  setData([]);
-                }
-              }}>{(backup === null) ? "Reset data" : "Undo reset"}</button>
+              <details className='w-full'>
+                <summary className='font-bold'>Advanced settings</summary>
+
+                <label className='font-bold'>Raw JSON</label>
+
+                <textarea value={jsonData} className="w-full block" rows={8} />
+
+                <button onClick={() => {
+                  if (hasClearBackup) {
+                    setData(backup);
+
+                    // TODO: backup any NEW data since the reset.
+                    setBackup(null);
+                    setBackupType(null);
+                  } else {
+                    setBackup(data);
+                    setBackupType("Clear");
+                    setData([]);
+                  }
+                }}>{(hasClearBackup) ? "Undo reset" : "Reset data"}</button>
+              </details>
             </div>
           </div>
 
