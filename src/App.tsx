@@ -261,10 +261,13 @@ function MonthTable(props: IMonthTableProps) {
   </table>;
 }
 
+type BackupType = "Load" | "Clear";
+
 function App() {
   const [data, setData] = useState<IDaysArray>(load_daysArray());
   const jsonData = serialize_daysArray(data);
   const [backup, setBackup] = useState<IDaysArray | null>(null);
+  const [backupType, setBackupType] = useState<BackupType | null>(null);
   const [viewDate, setViewDate] = useState(dayjs().startOf("year"));
   useEffect(() => {
     persist_daysArray(data);
@@ -372,6 +375,8 @@ function App() {
     const content = await readFile(file);
     
     // TODO: handle parser errors
+    setBackup(data);
+    setBackupType("Load");
     setData(deserialize_daysArray(content));
   };
 
@@ -472,17 +477,19 @@ function App() {
                 <textarea value={jsonData} className="w-10/12" rows={10} />
 
                 <button onClick={() => {
-                  const hasBackup = backup !== null;
-                  if (hasBackup) {
+                  const hasClearBackup = backup !== null && backupType === "Clear";
+                  if (hasClearBackup) {
                     setData(backup);
 
                     // TODO: backup any NEW data since the reset.
                     setBackup(null);
+                    setBackupType(null);
                   } else {
                     setBackup(data);
+                    setBackupType("Clear");
                     setData([]);
                   }
-                }}>{(backup === null) ? "Reset data" : "Undo reset"}</button>
+                }}>{(backup !== null && backupType === "Clear") ? "Undo reset" : "Reset data"}</button>
               </details>
             </div>
           </div>
