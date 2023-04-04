@@ -5,9 +5,10 @@ import dayjs, { Dayjs } from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { chooseRandom, classes, randBetween, split, times } from './utils';
-import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate } from './State';
+import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate, serialize_daysArray } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
+import { downloadFile } from './files';
 
 dayjs.extend(weekday);
 dayjs.extend(advancedFormat);
@@ -255,6 +256,7 @@ function MonthTable(props: IMonthTableProps) {
 
 function App() {
   const [data, setData] = useState<IDaysArray>(load_daysArray());
+  const jsonData = serialize_daysArray(data);
   const [backup, setBackup] = useState<IDaysArray | null>(null);
   const [viewDate, setViewDate] = useState(dayjs().startOf("year"));
   useEffect(() => {
@@ -348,6 +350,11 @@ function App() {
   const remainingHours = totalHours - usedHours;
   const remainingDays = (remainingHours / 8);
 
+  const onDownload = () => {
+    const indentedData = serialize_daysArray(data, 4);
+    downloadFile("export.json", indentedData);
+  }
+
   return (
     <>
       <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
@@ -429,18 +436,28 @@ function App() {
                 Include floating holidays <span className='text-slate-400'>(2 days/16 hours)</span>
               </label>
 
-              <button onClick={() => {
-                const hasBackup = backup !== null;
-                if (hasBackup) {
-                  setData(backup);
+              <button onClick={onDownload}>Download</button>
 
-                  // TODO: backup any NEW data since the reset.
-                  setBackup(null);
-                } else {
-                  setBackup(data);
-                  setData([]);
-                }
-              }}>{(backup === null) ? "Reset data" : "Undo reset"}</button>
+              <details className='w-full'>
+                <summary className='font-bold'>Advanced settings</summary>
+
+                <label className='font-bold'>Raw JSON</label>
+
+                <textarea value={jsonData} className="w-10/12" rows={10} />
+
+                <button onClick={() => {
+                  const hasBackup = backup !== null;
+                  if (hasBackup) {
+                    setData(backup);
+
+                    // TODO: backup any NEW data since the reset.
+                    setBackup(null);
+                  } else {
+                    setBackup(data);
+                    setData([]);
+                  }
+                }}>{(backup === null) ? "Reset data" : "Undo reset"}</button>
+              </details>
             </div>
           </div>
 

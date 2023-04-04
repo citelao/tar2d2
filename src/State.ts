@@ -1,9 +1,14 @@
 import dayjs from 'dayjs'
 import IDaysArray from "./DaysArray";
 
+export function serialize_daysArray(value: IDaysArray, indent?: number): string
+{
+    return JSON.stringify(value, undefined, indent);
+}
+
 export function persist_daysArray(value: IDaysArray)
 {
-    localStorage.setItem("days", JSON.stringify(value));
+    localStorage.setItem("days", serialize_daysArray(value));
 }
 
 export function load_daysArray(): IDaysArray
