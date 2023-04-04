@@ -8,7 +8,7 @@ import { chooseRandom, classes, randBetween, split, times } from './utils';
 import { load_daysArray, load_includingFloating, load_startDate, persist_daysArray, persist_includingFloating, persist_startDate, serialize_daysArray } from './State';
 import IDaysArray from './DaysArray';
 import { navigateTable } from './tables';
-import { downloadFile } from './files';
+import { downloadFile, readFile } from './files';
 
 dayjs.extend(weekday);
 dayjs.extend(advancedFormat);
@@ -362,6 +362,17 @@ function App() {
     downloadFile("export.json", indentedData);
   }
 
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      // TODO: clearer error handling.
+      return;
+    }
+
+    const file = e.target.files[0];
+    const content = await readFile(file);
+    console.log(content);
+  };
+
   return (
     <>
       <div className='md:grid gap-4 md:grid-cols-[minmax(min-content,_30%)_1fr]'>
@@ -445,10 +456,10 @@ function App() {
 
               <div className='flex gap-2'>
                 <label htmlFor='import' className='labelButton grow'>
-                  Import
+                  Load
                 </label>
-                <input id="import" type="file" className='hidden'/>
-                <button onClick={onDownload} className="grow">Export</button>
+                <input id="import" type="file" className='hidden' onChange={handleImport}/>
+                <button onClick={onDownload} className="grow">Save</button>
               </div>
 
               <details className='w-full'>

@@ -11,3 +11,22 @@ export function downloadFile(filename: string, content: string) {
 
     document.body.removeChild(element)
 }
+
+export async function readFile(file: File): Promise<string> {
+    return new Promise<string>((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (!e.target) {
+                // Rejecting for unknown reason.
+                rej();
+                return;
+            }
+            const contents = e.target.result as string;
+            res(contents);
+        };
+        reader.onerror = (e) => {
+            rej(e.target?.error);
+        }
+        reader.readAsText(file);
+    });
+}
