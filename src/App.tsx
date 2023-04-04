@@ -364,7 +364,7 @@ function App() {
   const remainingHours = totalHours - usedHours;
   const remainingDays = (remainingHours / 8);
 
-  const onDownload = () => {
+  const handleExport = () => {
     const indentedData = serialize_daysArray(data, 4);
     downloadFile("export.json", indentedData);
   }
@@ -409,7 +409,7 @@ function App() {
                   onClick={() => setViewDate(viewDate.add(-1, "year"))}>
                     &larr;
                 </button>
-                <label className='grow' htmlFor='year'>
+                <label htmlFor='year'>
                   Year:
                 </label>
                 <input id="year" className='grow' type="year" value={viewDate.format("YYYY")} onChange={(e) => setViewDate(dayjs(e.target.value, "YYYY"))} />
@@ -484,7 +484,7 @@ function App() {
                 {hasLoadBackup
                   ? <button className='grow' onClick={handleUndoImport}>Undo load</button>
                   : null}
-                <button onClick={onDownload} className="grow">Export</button>
+                <button onClick={handleExport} className="grow">Export</button>
               </div>
 
               <details className='w-full'>
