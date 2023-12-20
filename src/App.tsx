@@ -559,7 +559,7 @@ function App() {
             />)}
         </div>
 
-        <div className=''>
+        <div className='p-2'>
           <h2>Changelog</h2>
 
           <ul>
