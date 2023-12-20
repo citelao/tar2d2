@@ -323,6 +323,17 @@ function App() {
     dayjs("2023-11-24", "YYYY-MM-DD"),
     dayjs("2023-12-25", "YYYY-MM-DD"),
     dayjs("2023-12-26", "YYYY-MM-DD"),
+
+    dayjs("2024-01-01", "YYYY-MM-DD"),
+    dayjs("2024-01-15", "YYYY-MM-DD"),
+    dayjs("2024-02-19", "YYYY-MM-DD"),
+    dayjs("2024-05-27", "YYYY-MM-DD"),
+    dayjs("2024-07-04", "YYYY-MM-DD"),
+    dayjs("2024-09-02", "YYYY-MM-DD"),
+    dayjs("2024-11-28", "YYYY-MM-DD"),
+    dayjs("2024-11-29", "YYYY-MM-DD"),
+    dayjs("2024-12-24", "YYYY-MM-DD"),
+    dayjs("2024-12-25", "YYYY-MM-DD"),
   ];
 
   const doesYearHaveHolidays = (year: number): boolean => {
@@ -331,6 +342,8 @@ function App() {
   };
 
   // https://holidays.microsoft.com/
+  //
+  // or https://aka.ms/holidays
   const isHoliday = (day: dayjs.Dayjs): boolean => {
     // TODO.
     const isKnownHoliday = !!known_holidays.find((d) => d.isSame(day, "day"));
