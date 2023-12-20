@@ -112,9 +112,15 @@ function pop_location(pos: {x: number; y: number; }) {
 interface IMonthTableProps {
   month: string;
   days: dayjs.Dayjs[];
-  isDayOff: (d: dayjs.Dayjs) => boolean;
+  getHoursOff: (d: dayjs.Dayjs) => number;
   isDayAlreadyOff: (d: dayjs.Dayjs) => boolean;
-  onClick: (d: dayjs.Dayjs, pos: { x: number; y: number; }) => void;
+  onClick: (
+    d: dayjs.Dayjs,
+    pos: { x: number; y: number; }, 
+    opts: {
+      shiftKey: boolean;
+    }
+  ) => void;
 }
 
 function MonthTable(props: IMonthTableProps) {
@@ -225,7 +231,7 @@ function MonthTable(props: IMonthTableProps) {
               return <td>&nbsp;</td>;
             }
 
-            const hasOff = props.isDayOff(d);
+            const hasOff = props.getHoursOff(d) > 0;
             const isAutomatic = props.isDayAlreadyOff(d);
             const isToday = d.isSame(dayjs(), "day");
             const isLastFocused = focusedDate.isSame(d, "day");
@@ -249,7 +255,7 @@ function MonthTable(props: IMonthTableProps) {
                     (isAutomatic) ? "Holiday" : undefined,
                   ].join(" ")}
                   tabIndex={(isLastFocused) ? 0 : -1}
-                  onClick={(e) => props.onClick(d, {x: e.clientX, y: e.clientY }) }>
+                  onClick={(e) => props.onClick(d, {x: e.clientX, y: e.clientY }, { shiftKey: e.shiftKey }) }>
                     {d.date()}
                 </button>
               </td>;
@@ -354,8 +360,8 @@ function App() {
     return isWeekend(day) || isHoliday(day);
   }
 
-  const isDayOff = (day: dayjs.Dayjs): boolean => {
-    return get_time_off(data, day) !== 0;
+  const getHoursOff = (day: dayjs.Dayjs): number => {
+    return get_time_off(data, day);
   }
 
   const usedHours = data.reduce((acc, v) => { return acc + v.hours }, 0);
@@ -531,15 +537,19 @@ function App() {
           {getDaysForYearByMonth(currentYear).map((m) => <MonthTable
             month={m.monthD.format("MMMM")}
             days={m.days}
-            isDayOff={isDayOff}
+            getHoursOff={getHoursOff}
             isDayAlreadyOff={isAlreadyOff}
-            onClick={(d, pos) => {
+            onClick={(d, pos, opts) => {
               if (!isAlreadyOff(d)) {
-                if (isDayOff(d)) {
+                if (getHoursOff(d) > 0) {
                   setData(set_time_off(data, d, 0));
                 } else {
                   pop_location(pos);
-                  setData(set_time_off(data, d, 8));
+                  if (opts.shiftKey) {
+                    setData(set_time_off(data, d, 4));
+                  } else {
+                    setData(set_time_off(data, d, 8));
+                  }
                 }
               }
             }}
