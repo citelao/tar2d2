@@ -247,6 +247,7 @@ function MonthTable(props: IMonthTableProps) {
                     (isToday) ? "font-bold" : "border-transparent",
                     (isToday && isFullDayOff) ? "border-emerald-500 hover:border-sky-700" : null,
                     (isToday && !isFullDayOff) ? "border-slate-300 hover:border-sky-400" : null,
+                    (hoursOff > 0 && !isFullDayOff) ? "bg-green-half dark:bg-green-half-dark hover:bg-green-half-hover hover:dark:bg-green-half-hover-dark" : null,
                   ])}
                   data-day={d.format("YYYY-MM-DD")}
                   aria-disabled={isAutomatic}

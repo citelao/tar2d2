@@ -10,13 +10,66 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: theme("colors.backgroundDark");
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+@layer utilities {
+  .text-deemphasis {
+    @apply text-slate-300;
+    @apply dark:text-slate-600;
+  }
+
+  .bg-green {
+    @apply bg-emerald-300;
+    @apply dark:bg-emerald-900;
+  }
+
+  .bg-green-half {
+    /* // https://stackoverflow.com/questions/23362157/how-to-make-a-css-triangle-background-on-a-div-without-using-border-and-image */
+    background: linear-gradient(to bottom right, transparent 0%, transparent 50%, theme('colors.emerald.300') 50%, theme('colors.emerald.300') 100%);
+    @apply border-emerald-300;
+
+    border-top-color: theme('colors.backgroundLight');
+    border-left-color: theme('colors.backgroundLight');
+  }
+
+  .bg-green-half-hover {
+    /* // https://stackoverflow.com/questions/23362157/how-to-make-a-css-triangle-background-on-a-div-without-using-border-and-image */
+    background: linear-gradient(to bottom right, transparent 0%, transparent 50%, theme('colors.sky.400') 50%, theme('colors.sky.400') 100%);
+    @apply border-sky-400;
+
+    border-top-color: theme('colors.backgroundLight');
+    border-left-color: theme('colors.backgroundLight');
+  }
+
+  .bg-green-half-dark {
+    /* // https://stackoverflow.com/questions/23362157/how-to-make-a-css-triangle-background-on-a-div-without-using-border-and-image */
+    background: linear-gradient(to bottom right, transparent 0%, transparent 50%, theme('colors.emerald.900') 50%, theme('colors.emerald.900') 100%);
+    @apply border-emerald-900;
+
+    border-top-color: theme('colors.backgroundDark');
+    border-left-color: theme('colors.backgroundDark');
+  }
+
+  .bg-green-half-hover-dark {
+    /* // https://stackoverflow.com/questions/23362157/how-to-make-a-css-triangle-background-on-a-div-without-using-border-and-image */
+    background: linear-gradient(to bottom right, transparent 0%, transparent 50%, theme('colors.sky.600') 50%, theme('colors.sky.600') 100%);
+    @apply border-sky-600;
+
+    border-top-color: theme('colors.sky.700');
+    border-left-color: theme('colors.sky.700');
+  }
+
+  .bg-red {
+    @apply bg-red-200;
+    @apply dark:bg-red-900;
+  }
 }
 
 @layer components {
@@ -66,21 +119,6 @@
     @apply mx-2;
   }
 
-  .text-deemphasis {
-    @apply text-slate-300;
-    @apply dark:text-slate-600;
-  }
-
-  .bg-green {
-    @apply bg-emerald-300;
-    @apply dark:bg-emerald-900;
-  }
-
-  .bg-red {
-    @apply bg-red-200;
-    @apply dark:bg-red-900;
-  }
-
   .particle {
     border-radius: 50%;
     left: 0;
@@ -118,7 +156,7 @@ input {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: theme("colors.backgroundLight");
   }
   a:hover {
     color: #747bff;

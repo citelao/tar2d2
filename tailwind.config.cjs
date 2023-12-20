@@ -13,6 +13,10 @@ module.exports = {
         '4/7': '57.1428571%',
         '5/7': '71.4285714%',
         '6/7': '85.7142857%',
+      },
+      colors: {
+        backgroundDark: "#242424",
+        backgroundLight: "#ffffff",
       }
     },
   },
