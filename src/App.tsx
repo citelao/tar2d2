@@ -549,12 +549,14 @@ function App() {
 
       <hr />
 
-      <h2 className='font-bold'>Known vacations</h2>
-      <ul>
-        {known_holidays.map((d) => {
-          return <li>{d.format("MMMM D, YYYY")}</li>;
-        })}
-      </ul>
+      <details>
+        <summary className='font-bold'>Known vacations</summary>
+        <ul>
+          {known_holidays.map((d) => {
+            return <li>{d.format("MMMM D, YYYY")}</li>;
+          })}
+        </ul>
+      </details>
 
       <h2>Accrual rates</h2>
       <p className='text-slate-400'>(via <a href="https://microsoft.sharepoint.com/sites/HRweb/SitePages/FAQ_DTO.aspx">Discretionary Time Off (DTO) FAQ</a>)</p>
