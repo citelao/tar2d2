@@ -418,7 +418,7 @@ function App() {
 
   return (
     <>
-      <div className='md:grid gap-4 md:grid-cols-[330px_1fr] pb-4'>
+      <div className='md:grid gap-4 md:grid-cols-[330px_1fr_1fr] pb-4'>
           {/* Spare div to declare a "column" */}
           <div>
             <div className='md:sticky md:w-[330px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
@@ -557,6 +557,15 @@ function App() {
               }
             }}
             />)}
+        </div>
+
+        <div className=''>
+          <h2>Changelog</h2>
+
+          <ul>
+            <li><strong>Dec 2023:</strong> half days! (shift-click, sorry mobile)</li>
+            <li><strong>Dec 2023:</strong> added 2024 holidays!</li>
+          </ul>
         </div>
       </div>
 
