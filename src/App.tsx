@@ -423,7 +423,7 @@ function App() {
           <div>
             <div className='md:sticky md:w-[330px] top-10 flex flex-col gap-4 md:overflow-y-auto md:h-[95vh]'>
               <h1 className="text-3xl font-bold">TAR2-D2</h1>
-              <p>A simple vacation tracker 🤖</p>
+              <p>A simple vacation tracker 🤖🌴</p>
 
               <div className='flex items-baseline'>
                 <button
