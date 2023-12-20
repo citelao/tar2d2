@@ -231,7 +231,8 @@ function MonthTable(props: IMonthTableProps) {
               return <td>&nbsp;</td>;
             }
 
-            const hasOff = props.getHoursOff(d) > 0;
+            const hoursOff = props.getHoursOff(d);
+            const isFullDayOff = hoursOff === 8;
             const isAutomatic = props.isDayAlreadyOff(d);
             const isToday = d.isSame(dayjs(), "day");
             const isLastFocused = focusedDate.isSame(d, "day");
@@ -240,19 +241,20 @@ function MonthTable(props: IMonthTableProps) {
                   onKeyDown={onButtonKeyDown}
                   className={classes([
                     'text-right rounded-none m-0 w-full p-3 px-4 border-2',
-                    (hasOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700",
+                    (isFullDayOff) ? "bg-green hover:bg-sky-400 hover:dark:bg-sky-600" : "hover:bg-sky-200 hover:dark:bg-sky-700",
                     (isAutomatic) ? "bg-zinc-100 dark:bg-zinc-900 hover:bg-sky-100 dark:hover:bg-sky-900 text-deemphasis" : null,
-                    (hasOff || isAutomatic) ? null : "bg-inherit",
+                    (isFullDayOff || isAutomatic) ? null : "bg-inherit",
                     (isToday) ? "font-bold" : "border-transparent",
-                    (isToday && hasOff) ? "border-emerald-500 hover:border-sky-700" : null,
-                    (isToday && !hasOff) ? "border-slate-300 hover:border-sky-400" : null,
+                    (isToday && isFullDayOff) ? "border-emerald-500 hover:border-sky-700" : null,
+                    (isToday && !isFullDayOff) ? "border-slate-300 hover:border-sky-400" : null,
                   ])}
                   data-day={d.format("YYYY-MM-DD")}
                   aria-disabled={isAutomatic}
                   aria-label={[
                     d.format("Do"),
-                    (hasOff) ? "Vacation" : undefined,
+                    (isFullDayOff) ? "Vacation" : undefined,
                     (isAutomatic) ? "Holiday" : undefined,
+                    (hoursOff > 0 && !isFullDayOff) ? `${hoursOff} hour partial vacation` : undefined,
                   ].join(" ")}
                   tabIndex={(isLastFocused) ? 0 : -1}
                   onClick={(e) => props.onClick(d, {x: e.clientX, y: e.clientY }, { shiftKey: e.shiftKey }) }>
