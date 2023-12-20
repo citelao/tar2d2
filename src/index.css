@@ -44,8 +44,7 @@
     background: linear-gradient(to bottom right, transparent 0%, transparent 50%, theme('colors.sky.400') 50%, theme('colors.sky.400') 100%);
     @apply border-sky-400;
 
-    border-top-color: theme('colors.backgroundLight');
-    border-left-color: theme('colors.backgroundLight');
+    border-color: theme("colors.activeColor");
   }
 
   .bg-green-half-dark {
@@ -62,8 +61,7 @@
     background: linear-gradient(to bottom right, transparent 0%, transparent 50%, theme('colors.sky.600') 50%, theme('colors.sky.600') 100%);
     @apply border-sky-600;
 
-    border-top-color: theme('colors.sky.700');
-    border-left-color: theme('colors.sky.700');
+    border-color: theme("colors.activeColor");
   }
 
   .bg-red {
@@ -90,7 +88,7 @@
     transition: border-color 0.25s;
   }
   button:hover, .labelButton:hover {
-    border-color: #646cff;
+    border-color: theme("colors.activeColor");
   }
   button:focus, .labelButton:focus
   button:focus-visible, .labelButton:focus-visible {
@@ -137,7 +135,7 @@ body {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: theme("colors.activeColor");
   text-decoration: inherit;
 }
 a:hover {
